@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">PopularMovies</string>
+    <string name="error_message">
+        An error has occurred. Please try again by selecting a sort
+    </string>
+
+    <!--DIFFERENT SORTING ACTIONS-->
+    <string name="sort_most_popular">Most Popular</string>
+    <string name="sort_highest_rated">Highest Rated</string>
 </resources>
