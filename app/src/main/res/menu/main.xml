@@ -7,16 +7,10 @@
     <item
         android:title="@string/sort_most_popular"
         android:id="@+id/action_sort_most_popular"
-        android:orderInCategory="1"
-        app:showAsAction="ifRoom"
-        android:onClick="onClickSortByMostPopular"
-        />
+        android:orderInCategory="1"/>
 
     <item
         android:title="@string/sort_highest_rated"
         android:id="@+id/action_sort_highest_rated"
-        android:orderInCategory="2"
-        app:showAsAction="ifRoom"
-        android:onClick="onClickSortByHighestRated"
-        />
+        android:orderInCategory="2"/>
 </menu>
