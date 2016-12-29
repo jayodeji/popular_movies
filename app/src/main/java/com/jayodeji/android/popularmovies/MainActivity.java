@@ -12,11 +12,21 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.jayodeji.android.popularmovies.utilities.MovieDbJsonUtils;
+import com.jayodeji.android.popularmovies.utilities.NetworkUtils;
+
+import java.io.IOException;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int NUM_COLUMNS = 2;
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static final String POPULAR_MOVIE_PATH = "popular";
+    private static final String TOP_RATED_MOVIE_PATH = "top_rated";
+    private static final String DEFAULT_MOVIE_PATH = POPULAR_MOVIE_PATH;
 
     private RecyclerView mRecyclerView;
 
@@ -43,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mMoviePosterAdapter);
 
-
+        loadMovieData(DEFAULT_MOVIE_PATH);
     }
 
     @Override
@@ -70,10 +80,54 @@ public class MainActivity extends AppCompatActivity {
      * ONCLICK MENU EVENTS
      */
     public void onClickSortByMostPopular() {
-        String sortByMostPopular = "";
+        loadMovieData(POPULAR_MOVIE_PATH);
     }
 
     public void onClickSortByHighestRated() {
-        String sortByHighestRated = "";
+        loadMovieData(TOP_RATED_MOVIE_PATH);
+    }
+
+    private void loadMovieData(String path) {
+        new FetchMovieListTask().execute("/movie/" + path);
+    }
+
+    public class FetchMovieListTask extends AsyncTask<String, Void, MoviePoster[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected MoviePoster[] doInBackground(String... strings) {
+            if (strings.length == 0) {
+                return null;
+            }
+
+            String moviePath = strings[0];
+            URL movieRequestUrl = NetworkUtils.buildUrl(moviePath);
+
+            String response = null;
+            try {
+                response = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
+                MoviePoster[] results = MovieDbJsonUtils.getMovieObjectsFromJson(response);
+                return results;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(MoviePoster[] moviePosters) {
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            if (moviePosters != null) {
+                showMoviePosterGrid();
+                mMoviePosterAdapter.setMoviePosterList(moviePosters);
+            } else {
+                showLoadingError();
+            }
+        }
     }
 }

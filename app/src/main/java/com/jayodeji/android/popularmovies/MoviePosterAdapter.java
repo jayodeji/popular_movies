@@ -1,6 +1,7 @@
 package com.jayodeji.android.popularmovies;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,7 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -20,18 +24,7 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
     private static final String TAG = MoviePosterAdapter.class.getSimpleName();
 
-    private MoviePoster[] mMoviePosterList = new MoviePoster[] {
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-            new MoviePoster("https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg"),
-    };
+    private MoviePoster[] mMoviePosterList = null;
 
     @Override
     public MoviePosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -46,12 +39,16 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
         if (mMoviePosterList != null && (mMoviePosterList.length > position)) {
             MoviePoster moviePoster = mMoviePosterList[position];
             String movieUrl = moviePoster.toString();
-            holder.mMoviePosterTextView.setText(movieUrl);
+
+            Context context = holder.mMoviePosterImageView.getContext();
+            Picasso.with(context).load(movieUrl).into(holder.mMoviePosterImageView);
+
             Log.d(TAG, "Bound url to view: " + movieUrl);
         } else {
             Log.d(TAG, "Cannot get movie with position: " + position);
         }
     }
+
 
     @Override
     public int getItemCount() {
@@ -61,18 +58,18 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
         return mMoviePosterList.length;
     }
 
-    public void setmMoviePosterList(MoviePoster[] list) {
+    public void setMoviePosterList(MoviePoster[] list) {
         mMoviePosterList = list;
         notifyDataSetChanged();
     }
 
     class MoviePosterViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mMoviePosterTextView;
+        private ImageView mMoviePosterImageView;
 
         public MoviePosterViewHolder(View posterView) {
             super(posterView);
-            mMoviePosterTextView = (TextView) posterView.findViewById(R.id.iv_movie_thumbnail);
+            mMoviePosterImageView = (ImageView) posterView.findViewById(R.id.iv_movie_poster);
         }
 
 

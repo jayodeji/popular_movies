@@ -3,8 +3,12 @@
     <string name="error_message">
         An error has occurred. Please try again by selecting a sort
     </string>
+    <string name="image_description">Movie poster</string>
 
     <!--DIFFERENT SORTING ACTIONS-->
     <string name="sort_most_popular">Most Popular</string>
     <string name="sort_highest_rated">Highest Rated</string>
+
+    <!--PUT API SECRET KEY HERE-->
+    <!--<string name="movie_db_api_key">XXXXX</string>-->
 </resources>
