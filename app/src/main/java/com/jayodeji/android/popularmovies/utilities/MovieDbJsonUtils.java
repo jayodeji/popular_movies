@@ -73,7 +73,7 @@ public class MovieDbJsonUtils {
         Date date = null;
 
         try {
-            date = (Date) dateFormat.parse(releaseDate);
+            date = dateFormat.parse(releaseDate);
             Calendar calendar = new GregorianCalendar();
             calendar.setTime(date);
 

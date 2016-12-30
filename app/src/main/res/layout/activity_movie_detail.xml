@@ -14,18 +14,18 @@
         android:id="@+id/tv_movie_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textSize="40sp"
+        android:padding="@dimen/title_padding"
+        android:textSize="@dimen/title_size"
         android:textColor="@color/colorMovieTitleText"
         android:background="@color/colorMovieTitleBackground"
         tools:text="Chappie"/>
 
     <ImageView
         android:id="@+id/iv_movie_thumbnail"
-        android:layout_width="150dp"
-        android:layout_height="210dp"
+        android:layout_width="@dimen/movie_thumbnail_width"
+        android:layout_height="@dimen/movie_thumbnail_height"
         android:layout_below="@+id/tv_movie_title"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="@dimen/activity_detail_margin"
         tools:src="@drawable/test_image"/>
 
     <TextView
@@ -34,9 +34,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_movie_title"
         android:layout_toRightOf="@+id/iv_movie_thumbnail"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="20dp"
-        android:textSize="25sp"
+        android:layout_marginTop="@dimen/activity_detail_margin"
+        android:layout_marginLeft="@dimen/activity_detail_left_margin"
+        android:textSize="@dimen/release_date_size"
         tools:text="2016" />
 
     <TextView
@@ -45,9 +45,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_release_date"
         android:layout_toRightOf="@+id/iv_movie_thumbnail"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp"
-        android:textSize="15sp"
+        android:layout_marginTop="@dimen/activity_detail_top_margin"
+        android:layout_marginLeft="@dimen/activity_detail_left_margin"
+        android:textSize="@dimen/generic_text_size"
         android:textStyle="bold"
         tools:text="7.9/10"/>
 
@@ -56,8 +56,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_movie_thumbnail"
-        android:layout_marginTop="10dp"
-        android:textSize="15sp"
+        android:layout_marginTop="@dimen/activity_detail_top_margin"
+        android:textSize="@dimen/generic_text_size"
         tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy." />
 
 </RelativeLayout>

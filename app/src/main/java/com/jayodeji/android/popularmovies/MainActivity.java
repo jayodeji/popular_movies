@@ -2,7 +2,6 @@ package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Network;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
