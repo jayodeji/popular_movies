@@ -23,6 +23,9 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.net.URL;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements MovieGridAdapter.MoviePosterClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -35,14 +38,11 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
     private static final String TOP_RATED_MOVIE_PATH = "top_rated";
     private static final String DEFAULT_MOVIE_PATH = POPULAR_MOVIE_PATH;
 
-    private RecyclerView mRecyclerView;
-
-    private TextView mErrorMessageDisplay;
-
-    private ProgressBar mLoadingIndicator;
+    @BindView(R.id.rv_movie_posters) protected RecyclerView mRecyclerView;
+    @BindView(R.id.tv_error_message_display) protected TextView mErrorMessageDisplay;
+    @BindView(R.id.pb_loading_indicator) protected ProgressBar mLoadingIndicator;
 
     private MovieGridAdapter mMovieGridAdapter;
-
     private Movie[] mMovieList = null;
 
 
@@ -51,9 +51,7 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView  = (RecyclerView) findViewById(R.id.rv_movie_posters);
-        mErrorMessageDisplay  = (TextView) findViewById(R.id.tv_error_message_display);
-        mLoadingIndicator  = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        ButterKnife.bind(this);
 
         mMovieGridAdapter = new MovieGridAdapter(this);
 

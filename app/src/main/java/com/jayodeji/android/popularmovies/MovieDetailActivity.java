@@ -8,29 +8,27 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_MOVIE = MovieDetailActivity.class.getSimpleName() + ".MOVIE";
 
-    private TextView mMovieTitle;
-    private TextView mMovieReleaseDate;
-    private TextView mMovieRating;
-    private TextView mMovieOverview;
+    @BindView(R.id.tv_movie_title) protected TextView mMovieTitle;
+    @BindView(R.id.tv_release_date) protected TextView mMovieReleaseDate;
+    @BindView(R.id.tv_movie_rating) protected TextView mMovieRating;
+    @BindView(R.id.tv_movie_overview) protected TextView mMovieOverview;
 
-    private ImageView mMovieThumbnail;
+    @BindView(R.id.iv_movie_thumbnail) protected ImageView mMovieThumbnail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
-        mMovieTitle = (TextView) findViewById(R.id.tv_movie_title);
-        mMovieReleaseDate = (TextView) findViewById(R.id.tv_release_date);
-        mMovieRating = (TextView) findViewById(R.id.tv_movie_rating);
-        mMovieOverview = (TextView) findViewById(R.id.tv_movie_overview);
-
-        mMovieThumbnail = (ImageView) findViewById(R.id.iv_movie_thumbnail);
-
+        ButterKnife.bind(this);
+        
         Intent intentThatStartedActivity = getIntent();
         if (intentThatStartedActivity.hasExtra(EXTRA_MOVIE)) {
             Movie movie = intentThatStartedActivity.getParcelableExtra(EXTRA_MOVIE);
