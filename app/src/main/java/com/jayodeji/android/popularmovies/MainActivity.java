@@ -2,6 +2,7 @@ package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Network;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jayodeji.android.popularmovies.utilities.MovieDbJsonUtils;
 import com.jayodeji.android.popularmovies.utilities.NetworkUtils;
@@ -26,9 +26,11 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements MovieGridAdapter.MoviePosterClickListener {
 
-    private static final int NUM_COLUMNS = 2;
-
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    public static final String EXTRA_MOVIE_ARRAY = MainActivity.class.getSimpleName() + ".MOVIE_LIST";
+
+    private static final int NUM_COLUMNS = 2;
 
     private static final String POPULAR_MOVIE_PATH = "popular";
     private static final String TOP_RATED_MOVIE_PATH = "top_rated";
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
     private ProgressBar mLoadingIndicator;
 
     private MovieGridAdapter mMovieGridAdapter;
+
+    private Movie[] mMovieList = null;
 
 
     @Override
@@ -59,7 +63,23 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mMovieGridAdapter);
 
-        loadMovieData(DEFAULT_MOVIE_PATH);
+        if (savedInstanceState != null) {
+            mMovieList = (Movie[]) savedInstanceState.getParcelableArray(EXTRA_MOVIE_ARRAY);
+        }
+
+        if (mMovieList != null) {
+            mMovieGridAdapter.setMovieList(mMovieList);
+        } else {
+            loadMovieData(DEFAULT_MOVIE_PATH);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mMovieList != null) {
+            outState.putParcelableArray(EXTRA_MOVIE_ARRAY, mMovieList);
+        }
     }
 
     @Override
@@ -153,9 +173,12 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         protected void onPostExecute(Movie[] movies) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movies != null) {
-                showMoviePosterGrid();
+                //save the movie list so we can recreate activity onCreate without another call
+                mMovieList = movies;
                 mMovieGridAdapter.setMovieList(movies);
+                showMoviePosterGrid();
             } else {
+
                 showLoadingError();
             }
         }

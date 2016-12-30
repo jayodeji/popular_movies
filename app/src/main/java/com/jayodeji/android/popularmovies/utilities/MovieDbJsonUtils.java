@@ -35,30 +35,31 @@ public class MovieDbJsonUtils {
 
     public static Movie[] getMovieObjectsFromJson(String responseJsonStr) throws JSONException {
         Movie[] parsedMovies = null;
+        if (responseJsonStr != null) {
+            JSONObject responseJson = new JSONObject(responseJsonStr);
+            JSONArray resultsArray = responseJson.getJSONArray(MDB_RESULTS);
 
-        JSONObject responseJson = new JSONObject(responseJsonStr);
-        JSONArray resultsArray = responseJson.getJSONArray(MDB_RESULTS);
+            int numResults = resultsArray.length();
+            parsedMovies = new Movie[numResults];
 
-        int numResults = resultsArray.length();
-        parsedMovies = new Movie[numResults];
+            for (int ii=0; ii<numResults; ii++) {
+                JSONObject movieJson = resultsArray.getJSONObject(ii);
 
-        for (int ii=0; ii<numResults; ii++) {
-            JSONObject movieJson = resultsArray.getJSONObject(ii);
+                String posterPath = movieJson.getString(MDB_POSTER_PATH);
+                String title = movieJson.getString(MDB_ORIGINAL_TITLE);
+                String overview = movieJson.getString(MDB_OVERVIEW);
+                String releaseDate = movieJson.getString(MDB_RELEASE_DATE);
+                String rating = movieJson.getString(MDB_AVERAGE_VOTE);
 
-            String posterPath = movieJson.getString(MDB_POSTER_PATH);
-            String title = movieJson.getString(MDB_ORIGINAL_TITLE);
-            String overview = movieJson.getString(MDB_OVERVIEW);
-            String releaseDate = movieJson.getString(MDB_RELEASE_DATE);
-            String rating = movieJson.getString(MDB_AVERAGE_VOTE);
-
-            Movie.Builder builder = new Movie.Builder();
-            builder.overview(overview)
-                    .rating(formatUserRating(rating))
-                    .releaseDate(formatReleaseDate(releaseDate))
-                    .title(title)
-                    .posterUrl(generatePosterUrl(posterPath))
-                    .thumbnailUrl(generateThumbnailUrl(posterPath));
-            parsedMovies[ii] = builder.build();
+                Movie.Builder builder = new Movie.Builder();
+                builder.overview(overview)
+                        .rating(formatUserRating(rating))
+                        .releaseDate(formatReleaseDate(releaseDate))
+                        .title(title)
+                        .posterUrl(generatePosterUrl(posterPath))
+                        .thumbnailUrl(generateThumbnailUrl(posterPath));
+                parsedMovies[ii] = builder.build();
+            }
         }
         return parsedMovies;
     }

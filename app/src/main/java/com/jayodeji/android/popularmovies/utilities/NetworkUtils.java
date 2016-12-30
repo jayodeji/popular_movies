@@ -1,6 +1,9 @@
 package com.jayodeji.android.popularmovies.utilities;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -8,8 +11,10 @@ import com.jayodeji.android.popularmovies.R;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -20,6 +25,8 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
+
+    private static final String GOOGLE_DNS = "8.8.8.8";
 
     private static final String MOVIE_DB_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -42,20 +49,34 @@ public class NetworkUtils {
     }
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        try {
-            InputStream in = urlConnection.getInputStream();
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-            boolean hasInput = scanner.hasNext();
-            if (hasInput) {
-                return scanner.next();
-            } else {
-                return null;
+        if (isOnline()) {
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            try {
+                InputStream in = urlConnection.getInputStream();
+                Scanner scanner = new Scanner(in);
+                scanner.useDelimiter("\\A");
+                boolean hasInput = scanner.hasNext();
+                if (hasInput) {
+                    return scanner.next();
+                }
+            } finally {
+                urlConnection.disconnect();
             }
-        } finally {
-            urlConnection.disconnect();
         }
+        return null;
+
     }
 
+    public static boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        Process ipProcess = null;
+        try {
+            ipProcess = runtime.exec("/system/bin/ping -c 1 " + GOOGLE_DNS);
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

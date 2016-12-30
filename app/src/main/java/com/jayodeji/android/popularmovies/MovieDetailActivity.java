@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MOVIE = "com.jayodeji.android.popularmovies.MOVIE";
+    public static final String EXTRA_MOVIE = MovieDetailActivity.class.getSimpleName() + ".MOVIE";
 
     private TextView mMovieTitle;
     private TextView mMovieReleaseDate;
