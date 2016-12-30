@@ -28,7 +28,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
 
         ButterKnife.bind(this);
-        
+
         Intent intentThatStartedActivity = getIntent();
         if (intentThatStartedActivity.hasExtra(EXTRA_MOVIE)) {
             Movie movie = intentThatStartedActivity.getParcelableExtra(EXTRA_MOVIE);
@@ -43,6 +43,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         mMovieRating.setText(movie.userRating);
         mMovieOverview.setText(movie.movieSynopsis);
 
-        Picasso.with(this).load(movie.thumbnailUrl).into(mMovieThumbnail);
+        Picasso.with(this)
+                .load(movie.thumbnailUrl)
+                .error(R.drawable.placeholder)
+                .into(mMovieThumbnail);
     }
 }
