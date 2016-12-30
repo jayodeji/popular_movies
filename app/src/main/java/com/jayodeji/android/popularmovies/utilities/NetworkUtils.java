@@ -40,6 +40,13 @@ public class NetworkUtils {
         return url;
     }
 
+    /**
+     * Inspiration for this came from the android sample projects in:
+     * Project Sunshine in the Android developer nanodegree
+     * @param url
+     * @return
+     * @throws IOException
+     */
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         if (isOnline()) {
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -59,6 +66,11 @@ public class NetworkUtils {
 
     }
 
+    /**
+     * This was gotten from the stackoverflow post:
+     * http://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out
+     * @return
+     */
     public static boolean isOnline() {
         Runtime runtime = Runtime.getRuntime();
         Process ipProcess = null;
