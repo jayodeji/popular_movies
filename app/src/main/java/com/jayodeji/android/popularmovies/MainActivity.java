@@ -1,8 +1,6 @@
 package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,14 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.jayodeji.android.popularmovies.utilities.MovieDbJsonUtils;
-import com.jayodeji.android.popularmovies.utilities.NetworkUtils;
-
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.net.URL;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
     @BindView(R.id.tv_error_message_display) protected TextView mErrorMessageDisplay;
     @BindView(R.id.pb_loading_indicator) protected ProgressBar mLoadingIndicator;
 
-    private MovieGridAdapter mMovieGridAdapter;
-    private Movie[] mMovieList = null;
+    protected MovieGridAdapter mMovieGridAdapter;
+    protected Movie[] mMovieList = null;
 
 
     @Override
@@ -107,12 +97,12 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
     /**
      * TOGGLE THE ERROR OR MOVIE POSTER VIEWS
      */
-    private void showMoviePosterGrid() {
+    protected void showMoviePosterGrid() {
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void showLoadingError() {
+    protected void showLoadingError() {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
@@ -128,56 +118,7 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
     }
 
     private void loadMovieData(String path) {
-        new FetchMovieListTask().execute("/movie/" + path);
+        new FetchMovieListTask(this).execute("/movie/" + path);
     }
 
-    public class FetchMovieListTask extends AsyncTask<String, Void, Movie[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Movie[] doInBackground(String... strings) {
-            Movie[] results = null;
-
-            if (strings.length > 0) {
-                String moviePath = strings[0];
-
-                Resources resources = getResources();
-                String apiKey = resources.getString(R.string.movie_db_api_key);
-                URL url = NetworkUtils.buildUrl(apiKey, moviePath);
-                String response = null;
-                try {
-                    response = NetworkUtils.getResponseFromHttpUrl(url);
-                    results = MovieDbJsonUtils.getMovieObjectsFromJson(response);
-                } catch (IOException e) {
-                    Log.v(TAG, "Error getting response from url: " + url);
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    Log.v(TAG, "Error parsing response: " + response);
-                    e.printStackTrace();
-                }
-            }
-
-            return results;
-
-        }
-
-        @Override
-        protected void onPostExecute(Movie[] movies) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (movies != null) {
-                //save the movie list so we can recreate activity onCreate without another call
-                mMovieList = movies;
-                mMovieGridAdapter.setMovieList(movies);
-                showMoviePosterGrid();
-            } else {
-
-                showLoadingError();
-            }
-        }
-    }
 }
