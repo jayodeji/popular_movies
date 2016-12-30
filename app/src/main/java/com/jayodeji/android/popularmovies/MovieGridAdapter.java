@@ -1,30 +1,30 @@
 package com.jayodeji.android.popularmovies;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 /**
  * Created by joshuaadeyemi on 12/28/16.
  */
 
-public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.MoviePosterViewHolder> {
+public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.MoviePosterViewHolder> {
 
-    private static final String TAG = MoviePosterAdapter.class.getSimpleName();
+    private static final String TAG = MovieGridAdapter.class.getSimpleName();
 
-    private MoviePoster[] mMoviePosterList = null;
+    private Movie[] mMovieList = null;
+
+    private final MoviePosterClickListener mOnMoviePosterClickListener;
+
+    public MovieGridAdapter(MoviePosterClickListener listener) {
+        mOnMoviePosterClickListener = listener;
+    }
 
     @Override
     public MoviePosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,14 +36,13 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
     @Override
     public void onBindViewHolder(MoviePosterViewHolder holder, int position) {
-        if (mMoviePosterList != null && (mMoviePosterList.length > position)) {
-            MoviePoster moviePoster = mMoviePosterList[position];
-            String movieUrl = moviePoster.toString();
+        if (mMovieList != null && (mMovieList.length > position)) {
+            Movie movie = mMovieList[position];
 
             Context context = holder.mMoviePosterImageView.getContext();
-            Picasso.with(context).load(movieUrl).into(holder.mMoviePosterImageView);
+            Picasso.with(context).load(movie.posterUrl).into(holder.mMoviePosterImageView);
 
-            Log.d(TAG, "Bound url to view: " + movieUrl);
+            Log.d(TAG, "Bound url to view: " + movie.posterUrl);
         } else {
             Log.d(TAG, "Cannot get movie with position: " + position);
         }
@@ -52,27 +51,37 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
     @Override
     public int getItemCount() {
-        if (mMoviePosterList == null) {
+        if (mMovieList == null) {
             return 0;
         }
-        return mMoviePosterList.length;
+        return mMovieList.length;
     }
 
-    public void setMoviePosterList(MoviePoster[] list) {
-        mMoviePosterList = list;
+    public void setMovieList(Movie[] list) {
+        mMovieList = list;
         notifyDataSetChanged();
     }
 
-    class MoviePosterViewHolder extends RecyclerView.ViewHolder {
+    class MoviePosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView mMoviePosterImageView;
 
         public MoviePosterViewHolder(View posterView) {
             super(posterView);
             mMoviePosterImageView = (ImageView) posterView.findViewById(R.id.iv_movie_poster);
+            posterView.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+            int clickedPosition = getAdapterPosition();
+            Movie clickedMovie = mMovieList[clickedPosition];
+            mOnMoviePosterClickListener.onMoviePosterClick(clickedMovie);
+        }
+    }
 
+    public interface MoviePosterClickListener {
+        public void onMoviePosterClick(Movie clickedMovie);
     }
 
 }

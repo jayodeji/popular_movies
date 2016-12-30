@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.jayodeji.android.popularmovies.MovieDetail">
+    tools:context="com.jayodeji.android.popularmovies.MovieDetailActivity">
 
     <TextView
         android:id="@+id/tv_movie_title"
@@ -56,7 +56,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_movie_thumbnail"
         android:layout_marginTop="10dp"
-        tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy."
-        />
+        tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy." />
 
 </RelativeLayout>
