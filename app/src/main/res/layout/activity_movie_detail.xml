@@ -13,7 +13,7 @@
     <TextView
         android:id="@+id/tv_movie_title"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:padding="10dp"
         android:textSize="40sp"
         android:textColor="@color/colorMovieTitleText"
@@ -36,8 +36,8 @@
         android:layout_toRightOf="@+id/iv_movie_thumbnail"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="20dp"
-        android:textSize="15sp"
-        tools:text="2016-12-14" />
+        android:textSize="25sp"
+        tools:text="2016" />
 
     <TextView
         android:id="@+id/tv_movie_rating"
@@ -48,6 +48,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:textSize="15sp"
+        android:textStyle="bold"
         tools:text="7.9/10"/>
 
     <TextView
@@ -56,6 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_movie_thumbnail"
         android:layout_marginTop="10dp"
+        android:textSize="15sp"
         tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy." />
 
 </RelativeLayout>

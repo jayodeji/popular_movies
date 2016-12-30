@@ -42,9 +42,9 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
             Context context = holder.mMoviePosterImageView.getContext();
             Picasso.with(context).load(movie.posterUrl).into(holder.mMoviePosterImageView);
 
-            Log.d(TAG, "Bound url to view: " + movie.posterUrl);
+            Log.v(TAG, "Bound url to view: " + movie.posterUrl);
         } else {
-            Log.d(TAG, "Cannot get movie with position: " + position);
+            Log.v(TAG, "Cannot get movie with position: " + position);
         }
     }
 

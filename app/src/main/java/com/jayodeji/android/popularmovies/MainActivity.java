@@ -1,13 +1,16 @@
 package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,6 +19,9 @@ import android.widget.Toast;
 import com.jayodeji.android.popularmovies.utilities.MovieDbJsonUtils;
 import com.jayodeji.android.popularmovies.utilities.NetworkUtils;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements MovieGridAdapter.MoviePosterClickListener {
@@ -63,6 +69,24 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case R.id.action_sort_highest_rated:
+                Log.v(TAG, "Sorting by highest rated.");
+                loadMovieData(TOP_RATED_MOVIE_PATH);
+                return true;
+            case R.id.action_sort_most_popular:
+                Log.v(TAG, "Sorting by most popular.");
+                loadMovieData(POPULAR_MOVIE_PATH);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
     /**
      * TOGGLE THE ERROR OR MOVIE POSTER VIEWS
      */
@@ -74,17 +98,6 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
     private void showLoadingError() {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * ONCLICK MENU EVENTS
-     */
-    public void onClickSortByMostPopular() {
-        loadMovieData(POPULAR_MOVIE_PATH);
-    }
-
-    public void onClickSortByHighestRated() {
-        loadMovieData(TOP_RATED_MOVIE_PATH);
     }
 
     /**
@@ -111,21 +124,29 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
 
         @Override
         protected Movie[] doInBackground(String... strings) {
-            if (strings.length == 0) {
-                return null;
-            }
-            String moviePath = strings[0];
+            Movie[] results = null;
 
-            URL url = NetworkUtils.buildUrl(moviePath);
-            String response = null;
-            try {
-                response = NetworkUtils.getResponseFromHttpUrl(url);
-                Movie[] results = MovieDbJsonUtils.getMovieObjectsFromJson(response);
-                return results;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+            if (strings.length > 0) {
+                String moviePath = strings[0];
+
+                Resources resources = getResources();
+                String apiKey = resources.getString(R.string.movie_db_api_key);
+                URL url = NetworkUtils.buildUrl(apiKey, moviePath);
+                String response = null;
+                try {
+                    response = NetworkUtils.getResponseFromHttpUrl(url);
+                    results = MovieDbJsonUtils.getMovieObjectsFromJson(response);
+                } catch (IOException e) {
+                    Log.v(TAG, "Error getting response from url: " + url);
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    Log.v(TAG, "Error parsing response: " + response);
+                    e.printStackTrace();
+                }
             }
+
+            return results;
+
         }
 
         @Override
