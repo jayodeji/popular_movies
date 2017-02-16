@@ -1,6 +1,8 @@
 package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,11 +18,15 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements MovieGridAdapter.MoviePosterClickListener {
+public class MainActivity extends AppCompatActivity implements
+        MovieGridAdapter.MoviePosterClickListener,
+        LoaderManager.LoaderCallbacks<Movie[]> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String EXTRA_MOVIE_ARRAY = MainActivity.class.getSimpleName() + ".MOVIE_LIST";
+
+    private static final int MOVIE_LIST_LOADER_ID = 0;
 
     private static final int NUM_COLUMNS = 2;
 
@@ -57,7 +63,9 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         if (mMovieList != null) {
             mMovieGridAdapter.setMovieList(mMovieList);
         } else {
-            loadMovieData(DEFAULT_MOVIE_PATH);
+            Bundle loaderBundle = new Bundle();
+            loaderBundle.putString(FetchMovieListTaskLoader.MOVIE_PATH_KEY, DEFAULT_MOVIE_PATH);
+            getSupportLoaderManager().initLoader(MOVIE_LIST_LOADER_ID, loaderBundle, this);
         }
     }
 
@@ -82,11 +90,11 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         switch (itemId) {
             case R.id.action_sort_highest_rated:
                 Log.v(TAG, "Sorting by highest rated.");
-                loadMovieData(TOP_RATED_MOVIE_PATH);
+                reloadMovieData(TOP_RATED_MOVIE_PATH);
                 return true;
             case R.id.action_sort_most_popular:
                 Log.v(TAG, "Sorting by most popular.");
-                loadMovieData(POPULAR_MOVIE_PATH);
+                reloadMovieData(POPULAR_MOVIE_PATH);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -117,8 +125,38 @@ public class MainActivity extends AppCompatActivity implements MovieGridAdapter.
         startActivity(intent);
     }
 
-    private void loadMovieData(String path) {
-        new FetchMovieListTask(this).execute("/movie/" + path);
+    private void reloadMovieData(String path) {
+        Bundle loaderBundle = new Bundle();
+        loaderBundle.putString(FetchMovieListTaskLoader.MOVIE_PATH_KEY, path);
+        getSupportLoaderManager().restartLoader(MOVIE_LIST_LOADER_ID, loaderBundle, this);
     }
 
+    @Override
+    public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
+        String moviePath = null;
+        if (args != null) {
+            moviePath = args.getString(FetchMovieListTaskLoader.MOVIE_PATH_KEY);
+        }
+        if (moviePath == null) {
+            moviePath = DEFAULT_MOVIE_PATH;
+        }
+        moviePath = "/movie/" + moviePath;
+        return new FetchMovieListTaskLoader(this, moviePath);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Movie[]> loader, Movie[] data) {
+        this.mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMovieGridAdapter.setMovieList(data);
+        if (data == null) {
+            this.showLoadingError();
+        } else {
+            this.showMoviePosterGrid();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Movie[]> loader) {
+
+    }
 }
