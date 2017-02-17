@@ -39,7 +39,6 @@ public class FetchMovieListTaskLoader extends AsyncTaskLoader<Movie[]> {
         if (mMovieList != null) {
             deliverResult(mMovieList);
         } else {
-//            mActivityContext.mLoadingIndicator.setVisibility(View.VISIBLE);
             mActivityContext.showLoading();
             forceLoad();
         }
