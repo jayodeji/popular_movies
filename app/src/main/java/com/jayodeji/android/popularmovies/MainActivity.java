@@ -1,22 +1,19 @@
 package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.jayodeji.android.popularmovies.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements
         MovieGridAdapter.MoviePosterClickListener,
@@ -34,27 +31,22 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TOP_RATED_MOVIE_PATH = "top_rated";
     private static final String DEFAULT_MOVIE_PATH = POPULAR_MOVIE_PATH;
 
-    @BindView(R.id.rv_movie_posters) protected RecyclerView mRecyclerView;
-    @BindView(R.id.tv_error_message_display) protected TextView mErrorMessageDisplay;
-    @BindView(R.id.pb_loading_indicator) protected ProgressBar mLoadingIndicator;
-
     protected MovieGridAdapter mMovieGridAdapter;
     protected Movie[] mMovieList = null;
 
+    private ActivityMainBinding mMainBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        ButterKnife.bind(this);
+        mMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         mMovieGridAdapter = new MovieGridAdapter(this);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, NUM_COLUMNS);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(mMovieGridAdapter);
+        mMainBinding.rvMoviePosters.setLayoutManager(layoutManager);
+        mMainBinding.rvMoviePosters.setHasFixedSize(true);
+        mMainBinding.rvMoviePosters.setAdapter(mMovieGridAdapter);
 
         if (savedInstanceState != null) {
             mMovieList = (Movie[]) savedInstanceState.getParcelableArray(EXTRA_MOVIE_ARRAY);
@@ -106,13 +98,20 @@ public class MainActivity extends AppCompatActivity implements
      * TOGGLE THE ERROR OR MOVIE POSTER VIEWS
      */
     protected void showMoviePosterGrid() {
-        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.VISIBLE);
+        mMainBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMainBinding.tvErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        mMainBinding.rvMoviePosters.setVisibility(View.VISIBLE);
     }
 
     protected void showLoadingError() {
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        mMainBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMainBinding.rvMoviePosters.setVisibility(View.INVISIBLE);
+        mMainBinding.tvErrorMessageDisplay.setVisibility(View.VISIBLE);
+
+    }
+
+    protected void showLoading() {
+        mMainBinding.pbLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -146,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Movie[]> loader, Movie[] data) {
-        this.mLoadingIndicator.setVisibility(View.INVISIBLE);
         mMovieGridAdapter.setMovieList(data);
         if (data == null) {
             this.showLoadingError();

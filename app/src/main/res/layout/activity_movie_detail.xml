@@ -1,74 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_detail"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.jayodeji.android.popularmovies.MovieDetailActivity">
-
-    <TextView
-        android:id="@+id/tv_movie_title"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+        android:id="@+id/activity_detail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/title_padding"
-        android:textSize="@dimen/title_size"
-        android:textColor="@color/colorMovieTitleText"
-        android:background="@color/colorMovieTitleBackground"
-        tools:text="Chappie"/>
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.jayodeji.android.popularmovies.MovieDetailActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_movie_title"
-        android:layout_marginTop="@dimen/activity_detail_margin">
-
-        <RelativeLayout
+        <TextView
+            android:id="@+id/tv_movie_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:padding="@dimen/title_padding"
+            android:textSize="@dimen/title_size"
+            android:textColor="@color/colorMovieTitleText"
+            android:background="@color/colorMovieTitleBackground"
+            tools:text="Chappie"/>
 
-            <ImageView
-                android:id="@+id/iv_movie_thumbnail"
-                android:layout_width="@dimen/movie_thumbnail_width"
-                android:layout_height="@dimen/movie_thumbnail_height"
-                android:layout_marginTop="@dimen/activity_detail_margin"
-                tools:src="@drawable/test_image"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_movie_title"
+            android:layout_marginTop="@dimen/activity_detail_margin">
 
-            <TextView
-                android:id="@+id/tv_release_date"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/iv_movie_thumbnail"
-                android:layout_marginTop="@dimen/activity_detail_margin"
-                android:layout_marginLeft="@dimen/activity_detail_left_margin"
-                android:textSize="@dimen/release_date_size"
-                tools:text="2016" />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_movie_rating"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_release_date"
-                android:layout_toRightOf="@+id/iv_movie_thumbnail"
-                android:layout_marginTop="@dimen/activity_detail_top_margin"
-                android:layout_marginLeft="@dimen/activity_detail_left_margin"
-                android:textSize="@dimen/generic_text_size"
-                android:textStyle="bold"
-                tools:text="7.9/10"/>
+                <ImageView
+                    android:id="@+id/iv_movie_thumbnail"
+                    android:layout_width="@dimen/movie_thumbnail_width"
+                    android:layout_height="@dimen/movie_thumbnail_height"
+                    android:layout_marginTop="@dimen/activity_detail_margin"
+                    tools:src="@drawable/test_image"/>
 
-            <TextView
-                android:id="@+id/tv_movie_overview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/iv_movie_thumbnail"
-                android:layout_marginTop="@dimen/activity_detail_top_margin"
-                android:textSize="@dimen/generic_text_size"
-                tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy." />
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_release_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_movie_thumbnail"
+                    android:layout_marginTop="@dimen/activity_detail_margin"
+                    android:layout_marginLeft="@dimen/activity_detail_left_margin"
+                    android:textSize="@dimen/release_date_size"
+                    tools:text="2016" />
 
-    </ScrollView>
+                <TextView
+                    android:id="@+id/tv_movie_rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_release_date"
+                    android:layout_toRightOf="@+id/iv_movie_thumbnail"
+                    android:layout_marginTop="@dimen/activity_detail_top_margin"
+                    android:layout_marginLeft="@dimen/activity_detail_left_margin"
+                    android:textSize="@dimen/generic_text_size"
+                    android:textStyle="bold"
+                    tools:text="7.9/10"/>
 
-</RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_movie_overview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_movie_thumbnail"
+                    android:layout_marginTop="@dimen/activity_detail_top_margin"
+                    android:textSize="@dimen/generic_text_size"
+                    tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy." />
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
+</layout>
