@@ -17,6 +17,7 @@ public class Movie implements Parcelable {
     public final String userRating;
     public final String releaseDate;
     public final int runtime;
+    public final Trailer[] trailers;
 
     private Movie(Builder builder) {
         movieId = builder.newMovieId;
@@ -27,6 +28,7 @@ public class Movie implements Parcelable {
         userRating = builder.newUserRating;
         releaseDate = builder.newReleaseDate;
         runtime = builder.newRuntime;
+        trailers = builder.newTrailers;
     }
 
     protected Movie(Parcel in) {
@@ -38,6 +40,7 @@ public class Movie implements Parcelable {
         userRating = in.readString();
         releaseDate = in.readString();
         runtime = in.readInt();
+        trailers = in.createTypedArray(Trailer.CREATOR);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -58,15 +61,16 @@ public class Movie implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(movieId);
-        parcel.writeString(posterUrl);
-        parcel.writeString(thumbnailUrl);
-        parcel.writeString(originalTitle);
-        parcel.writeString(movieSynopsis);
-        parcel.writeString(userRating);
-        parcel.writeString(releaseDate);
-        parcel.writeInt(runtime);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(movieId);
+        dest.writeString(posterUrl);
+        dest.writeString(thumbnailUrl);
+        dest.writeString(originalTitle);
+        dest.writeString(movieSynopsis);
+        dest.writeString(userRating);
+        dest.writeString(releaseDate);
+        dest.writeInt(runtime);
+        dest.writeTypedArray(trailers, flags);
     }
 
     public static class Builder {
@@ -78,6 +82,7 @@ public class Movie implements Parcelable {
         private String newUserRating;
         private String newReleaseDate;
         private int newRuntime;
+        private Trailer[] newTrailers;
 
         public Builder movieId(int movieId) {
             newMovieId = movieId;
@@ -115,6 +120,11 @@ public class Movie implements Parcelable {
 
         public Builder runtime(int runtime) {
             newRuntime = runtime;
+            return this;
+        }
+
+        public Builder trailers(Trailer[] trailers) {
+            newTrailers = trailers;
             return this;
         }
 
