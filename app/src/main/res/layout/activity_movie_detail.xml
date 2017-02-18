@@ -23,10 +23,12 @@
             tools:text="Chappie"/>
 
         <ScrollView
+            android:id="@+id/sv_movie_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_movie_title"
-            android:layout_marginTop="@dimen/activity_detail_margin">
+            android:layout_marginTop="@dimen/activity_detail_margin"
+            android:visibility="visible">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -72,6 +74,25 @@
             </RelativeLayout>
 
         </ScrollView>
+
+        <TextView
+            android:id="@+id/tv_error_message_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/activity_padding"
+            android:text="@string/detail_error_message"
+            android:textSize="@dimen/error_message_text_size"
+            android:layout_gravity="center_horizontal"
+            android:visibility="invisible"
+            android:layout_below="@+id/tv_movie_title"/>
+
+        <ProgressBar
+            android:id="@+id/pb_loading_indicator"
+            android:layout_width="@dimen/progress_bar_width"
+            android:layout_height="@dimen/progress_bar_height"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"/>
 
     </RelativeLayout>
 </layout>

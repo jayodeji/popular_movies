@@ -1,4 +1,4 @@
-package com.jayodeji.android.popularmovies;
+package com.jayodeji.android.popularmovies.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,29 +9,35 @@ import android.os.Parcelable;
 
 public class Movie implements Parcelable {
 
+    public final int movieId;
     public final String posterUrl;
     public final String thumbnailUrl;
     public final String originalTitle;
     public final String movieSynopsis;
     public final String userRating;
     public final String releaseDate;
+    public final int runtime;
 
     private Movie(Builder builder) {
+        movieId = builder.newMovieId;
         posterUrl = builder.newPosterUrl;
         thumbnailUrl = builder.newThumbnailUrl;
         originalTitle = builder.newOriginalTitle;
         movieSynopsis = builder.newMovieSynopsis;
         userRating = builder.newUserRating;
         releaseDate = builder.newReleaseDate;
+        runtime = builder.newRuntime;
     }
 
     protected Movie(Parcel in) {
+        movieId = in.readInt();
         posterUrl = in.readString();
         thumbnailUrl = in.readString();
         originalTitle = in.readString();
         movieSynopsis = in.readString();
         userRating = in.readString();
         releaseDate = in.readString();
+        runtime = in.readInt();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -53,22 +59,30 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(movieId);
         parcel.writeString(posterUrl);
         parcel.writeString(thumbnailUrl);
         parcel.writeString(originalTitle);
         parcel.writeString(movieSynopsis);
         parcel.writeString(userRating);
         parcel.writeString(releaseDate);
+        parcel.writeInt(runtime);
     }
 
     public static class Builder {
+        private int newMovieId;
         private String newPosterUrl;
         private String newThumbnailUrl;
         private String newOriginalTitle;
         private String newMovieSynopsis;
         private String newUserRating;
         private String newReleaseDate;
+        private int newRuntime;
 
+        public Builder movieId(int movieId) {
+            newMovieId = movieId;
+            return this;
+        }
         public Builder posterUrl(String posterUrl) {
             newPosterUrl = posterUrl;
             return this;
@@ -96,6 +110,11 @@ public class Movie implements Parcelable {
 
         public Builder releaseDate(String releaseDate) {
             newReleaseDate = releaseDate;
+            return this;
+        }
+
+        public Builder runtime(int runtime) {
+            newRuntime = runtime;
             return this;
         }
 

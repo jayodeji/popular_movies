@@ -3,6 +3,11 @@
     <string name="error_message">
         An error has occurred. Please try again by selecting a sort
     </string>
+
+    <string name="detail_error_message">
+        An error has occurred loading movie details. Go back to main screen and try again.
+    </string>
+
     <string name="image_description">Movie poster</string>
 
     <!--DIFFERENT SORTING ACTIONS-->

@@ -11,15 +11,18 @@ public class MoviePoster implements Parcelable {
 
     public final String posterUrl;
     public final int movieId;
+    public final String title;
 
     private MoviePoster(Builder builder) {
-        this.posterUrl = builder.mPosterUrl;
-        this.movieId = builder.mMovieId;
+        posterUrl = builder.mPosterUrl;
+        movieId = builder.mMovieId;
+        title = builder.mTitle;
     }
 
     protected MoviePoster(Parcel in) {
-        this.posterUrl = in.readString();
-        this.movieId = in.readInt();
+        posterUrl = in.readString();
+        movieId = in.readInt();
+        title = in.readString();
     }
 
     public static final Creator<MoviePoster> CREATOR = new Creator<MoviePoster>() {
@@ -43,19 +46,26 @@ public class MoviePoster implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(posterUrl);
         dest.writeInt(movieId);
+        dest.writeString(title);
     }
 
     public static class Builder {
         private String mPosterUrl;
         private int mMovieId;
+        private String mTitle;
 
         public Builder movieId(int movieId) {
-            this.mMovieId = movieId;
+            mMovieId = movieId;
             return this;
         }
 
         public Builder posterUrl(String posterUrl) {
-            this.mPosterUrl = posterUrl;
+            mPosterUrl = posterUrl;
+            return this;
+        }
+
+        public Builder title(String title) {
+            mTitle = title;
             return this;
         }
 

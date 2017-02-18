@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.jayodeji.android.popularmovies.data.MoviePoster;
 import com.jayodeji.android.popularmovies.databinding.ActivityMainBinding;
+import com.jayodeji.android.popularmovies.loaders.FetchMovieListTaskLoader;
 
 public class MainActivity extends AppCompatActivity implements
         MovieGridAdapter.MoviePosterClickListener,
@@ -28,9 +29,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final int NUM_COLUMNS = 2;
 
-    private static final String POPULAR_MOVIE_PATH = "popular";
-    private static final String TOP_RATED_MOVIE_PATH = "top_rated";
-    private static final String DEFAULT_MOVIE_PATH = POPULAR_MOVIE_PATH;
+    private static final String POPULAR_MOVIE_TYPE = "popular";
+    private static final String TOP_RATED_MOVIE_TYPE = "top_rated";
+    private static final String DEFAULT_MOVIE_TYPE = POPULAR_MOVIE_TYPE;
 
     protected MovieGridAdapter mMovieGridAdapter;
     protected MoviePoster[] mMovieList = null;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements
             mMovieGridAdapter.setMovieList(mMovieList);
         } else {
             Bundle loaderBundle = new Bundle();
-            loaderBundle.putString(FetchMovieListTaskLoader.MOVIE_PATH_KEY, DEFAULT_MOVIE_PATH);
+            loaderBundle.putString(FetchMovieListTaskLoader.MOVIE_TYPE_KEY, DEFAULT_MOVIE_TYPE);
             getSupportLoaderManager().initLoader(MOVIE_LIST_LOADER_ID, loaderBundle, this);
         }
     }
@@ -83,11 +84,11 @@ public class MainActivity extends AppCompatActivity implements
         switch (itemId) {
             case R.id.action_sort_highest_rated:
                 Log.v(TAG, "Sorting by highest rated.");
-                reloadMovieData(TOP_RATED_MOVIE_PATH);
+                reloadMovieData(TOP_RATED_MOVIE_TYPE);
                 return true;
             case R.id.action_sort_most_popular:
                 Log.v(TAG, "Sorting by most popular.");
-                reloadMovieData(POPULAR_MOVIE_PATH);
+                reloadMovieData(POPULAR_MOVIE_TYPE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -98,50 +99,51 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * TOGGLE THE ERROR OR MOVIE POSTER VIEWS
      */
-    protected void showMoviePosterGrid() {
+    public void showMoviePosterGrid() {
         mMainBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
         mMainBinding.tvErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mMainBinding.rvMoviePosters.setVisibility(View.VISIBLE);
     }
 
-    protected void showLoadingError() {
+    public void showLoadingError() {
         mMainBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
         mMainBinding.rvMoviePosters.setVisibility(View.INVISIBLE);
         mMainBinding.tvErrorMessageDisplay.setVisibility(View.VISIBLE);
-
     }
 
-    protected void showLoading() {
+    public void showLoading() {
         mMainBinding.pbLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
     /**
      * Listen to click events on the recycler view
+     * When a Poster is selected, make a request to the movie db to get
+     * movie details
      * @param clickedMovie
      */
     public void onMoviePosterClick(MoviePoster clickedMovie) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, clickedMovie);
+        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE_ID, clickedMovie.movieId);
+        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE_TITLE, clickedMovie.title);
         startActivity(intent);
     }
 
     private void reloadMovieData(String path) {
         Bundle loaderBundle = new Bundle();
-        loaderBundle.putString(FetchMovieListTaskLoader.MOVIE_PATH_KEY, path);
+        loaderBundle.putString(FetchMovieListTaskLoader.MOVIE_TYPE_KEY, path);
         getSupportLoaderManager().restartLoader(MOVIE_LIST_LOADER_ID, loaderBundle, this);
     }
 
     @Override
     public Loader<MoviePoster[]> onCreateLoader(int id, Bundle args) {
-        String moviePath = null;
+        String movieListType = null;
         if (args != null) {
-            moviePath = args.getString(FetchMovieListTaskLoader.MOVIE_PATH_KEY);
+            movieListType = args.getString(FetchMovieListTaskLoader.MOVIE_TYPE_KEY);
         }
-        if (moviePath == null) {
-            moviePath = DEFAULT_MOVIE_PATH;
+        if (movieListType == null) {
+            movieListType = DEFAULT_MOVIE_TYPE;
         }
-        moviePath = "/movie/" + moviePath;
-        return new FetchMovieListTaskLoader(this, moviePath);
+        return new FetchMovieListTaskLoader(this, movieListType);
     }
 
     @Override

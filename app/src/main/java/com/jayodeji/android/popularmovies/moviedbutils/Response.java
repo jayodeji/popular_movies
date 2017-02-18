@@ -1,8 +1,8 @@
-package com.jayodeji.android.popularmovies.utilities;
+package com.jayodeji.android.popularmovies.moviedbutils;
 
 import android.util.Log;
 
-import com.jayodeji.android.popularmovies.Movie;
+import com.jayodeji.android.popularmovies.data.Movie;
 import com.jayodeji.android.popularmovies.data.MoviePoster;
 
 import org.json.JSONArray;
@@ -19,17 +19,20 @@ import java.util.GregorianCalendar;
  * Created by joshuaadeyemi on 12/29/16.
  */
 
-public class MovieDbJsonUtils {
+public class Response {
 
-    private static final String TAG = MovieDbJsonUtils.class.getSimpleName();
+    private static final String TAG = Response.class.getSimpleName();
 
     private static final String MDB_RESULTS = "results";
+
     private static final String MDB_MOVIE_ID = "id";
     private static final String MDB_POSTER_PATH = "poster_path";
     private static final String MDB_ORIGINAL_TITLE = "original_title";
+    private static final String MDB_TITLE = "title";
     private static final String MDB_OVERVIEW = "overview";
     private static final String MDB_AVERAGE_VOTE = "vote_average";
     private static final String MDB_RELEASE_DATE = "release_date";
+    private static final String MDB_RUNTIME = "runtime";
 
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w500";
@@ -49,7 +52,8 @@ public class MovieDbJsonUtils {
 
                 MoviePoster.Builder builder = new MoviePoster.Builder();
                 builder.movieId(movieJson.getInt(MDB_MOVIE_ID))
-                        .posterUrl(generatePosterUrl(movieJson.getString(MDB_POSTER_PATH)));
+                        .posterUrl(generatePosterUrl(movieJson.getString(MDB_POSTER_PATH)))
+                        .title(movieJson.getString(MDB_TITLE));
 
                 moviePosterList[ii] = builder.build();
             }
@@ -57,35 +61,22 @@ public class MovieDbJsonUtils {
         return moviePosterList;
     }
 
-    public static Movie[] getMovieObjectsFromJson(String responseJsonStr) throws JSONException {
-        Movie[] parsedMovies = null;
+    public static Movie getMovieFromJson(String responseJsonStr) throws JSONException {
+        Movie movie = null;
         if (responseJsonStr != null) {
-            JSONObject responseJson = new JSONObject(responseJsonStr);
-            JSONArray resultsArray = responseJson.getJSONArray(MDB_RESULTS);
+            JSONObject movieJson = new JSONObject(responseJsonStr);
 
-            int numResults = resultsArray.length();
-            parsedMovies = new Movie[numResults];
-
-            for (int ii=0; ii<numResults; ii++) {
-                JSONObject movieJson = resultsArray.getJSONObject(ii);
-
-                String posterPath = movieJson.getString(MDB_POSTER_PATH);
-                String title = movieJson.getString(MDB_ORIGINAL_TITLE);
-                String overview = movieJson.getString(MDB_OVERVIEW);
-                String releaseDate = movieJson.getString(MDB_RELEASE_DATE);
-                String rating = movieJson.getString(MDB_AVERAGE_VOTE);
-
-                Movie.Builder builder = new Movie.Builder();
-                builder.overview(overview)
-                        .rating(formatUserRating(rating))
-                        .releaseDate(formatReleaseDate(releaseDate))
-                        .title(title)
-                        .posterUrl(generatePosterUrl(posterPath))
-                        .thumbnailUrl(generateThumbnailUrl(posterPath));
-                parsedMovies[ii] = builder.build();
-            }
+            Movie.Builder builder = new Movie.Builder();
+            builder.movieId(movieJson.getInt(MDB_MOVIE_ID))
+                    .title(movieJson.getString(MDB_TITLE))
+                    .thumbnailUrl(generateThumbnailUrl(movieJson.getString(MDB_POSTER_PATH)))
+                    .releaseDate(formatReleaseDate(movieJson.getString(MDB_RELEASE_DATE)))
+                    .runtime(movieJson.getInt(MDB_RUNTIME))
+                    .rating(formatUserRating(movieJson.getString(MDB_AVERAGE_VOTE)))
+                    .overview(movieJson.getString(MDB_OVERVIEW));
+            movie = builder.build();
         }
-        return parsedMovies;
+        return movie;
     }
 
     private static String formatUserRating(String rating) {
@@ -118,5 +109,6 @@ public class MovieDbJsonUtils {
     private static String generateThumbnailUrl(String path) {
         return POSTER_BASE_URL + THUMBNAIL_SIZE + path;
     }
+
 }
 
