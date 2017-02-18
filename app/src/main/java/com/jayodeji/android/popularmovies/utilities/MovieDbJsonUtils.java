@@ -3,6 +3,7 @@ package com.jayodeji.android.popularmovies.utilities;
 import android.util.Log;
 
 import com.jayodeji.android.popularmovies.Movie;
+import com.jayodeji.android.popularmovies.data.MoviePoster;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +24,7 @@ public class MovieDbJsonUtils {
     private static final String TAG = MovieDbJsonUtils.class.getSimpleName();
 
     private static final String MDB_RESULTS = "results";
+    private static final String MDB_MOVIE_ID = "id";
     private static final String MDB_POSTER_PATH = "poster_path";
     private static final String MDB_ORIGINAL_TITLE = "original_title";
     private static final String MDB_OVERVIEW = "overview";
@@ -32,6 +34,28 @@ public class MovieDbJsonUtils {
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w500";
     private static final String THUMBNAIL_SIZE = "w92";
+
+    public static MoviePoster[] getMoviePosterObjectsFromJson(String responseJsonStr) throws JSONException {
+        MoviePoster[] moviePosterList = null;
+        if (responseJsonStr != null) {
+            JSONObject responseJson = new JSONObject(responseJsonStr);
+            JSONArray resultsArray = responseJson.getJSONArray(MDB_RESULTS);
+
+            int numResults = resultsArray.length();
+            moviePosterList = new MoviePoster[numResults];
+
+            for (int ii=0; ii<numResults; ii++) {
+                JSONObject movieJson = resultsArray.getJSONObject(ii);
+
+                MoviePoster.Builder builder = new MoviePoster.Builder();
+                builder.movieId(movieJson.getInt(MDB_MOVIE_ID))
+                        .posterUrl(generatePosterUrl(movieJson.getString(MDB_POSTER_PATH)));
+
+                moviePosterList[ii] = builder.build();
+            }
+        }
+        return moviePosterList;
+    }
 
     public static Movie[] getMovieObjectsFromJson(String responseJsonStr) throws JSONException {
         Movie[] parsedMovies = null;

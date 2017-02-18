@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.jayodeji.android.popularmovies.data.MoviePoster;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -18,7 +19,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
 
     private static final String TAG = MovieGridAdapter.class.getSimpleName();
 
-    private Movie[] mMovieList = null;
+    private MoviePoster[] mMovieList = null;
 
     private final MoviePosterClickListener mOnMoviePosterClickListener;
 
@@ -37,7 +38,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
     @Override
     public void onBindViewHolder(MoviePosterViewHolder holder, int position) {
         if (mMovieList != null && (mMovieList.length > position)) {
-            Movie movie = mMovieList[position];
+            MoviePoster movie = mMovieList[position];
 
             Context context = holder.mMoviePosterImageView.getContext();
             Picasso.with(context)
@@ -60,7 +61,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
         return mMovieList.length;
     }
 
-    public void setMovieList(Movie[] list) {
+    public void setMovieList(MoviePoster[] list) {
         mMovieList = list;
         notifyDataSetChanged();
     }
@@ -78,13 +79,13 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieGridAdapter.Movi
         @Override
         public void onClick(View view) {
             int clickedPosition = getAdapterPosition();
-            Movie clickedMovie = mMovieList[clickedPosition];
+            MoviePoster clickedMovie = mMovieList[clickedPosition];
             mOnMoviePosterClickListener.onMoviePosterClick(clickedMovie);
         }
     }
 
     public interface MoviePosterClickListener {
-        public void onMoviePosterClick(Movie clickedMovie);
+        public void onMoviePosterClick(MoviePoster clickedMovie);
     }
 
 }

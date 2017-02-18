@@ -13,11 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.jayodeji.android.popularmovies.data.MoviePoster;
 import com.jayodeji.android.popularmovies.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements
         MovieGridAdapter.MoviePosterClickListener,
-        LoaderManager.LoaderCallbacks<Movie[]> {
+        LoaderManager.LoaderCallbacks<MoviePoster[]> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String DEFAULT_MOVIE_PATH = POPULAR_MOVIE_PATH;
 
     protected MovieGridAdapter mMovieGridAdapter;
-    protected Movie[] mMovieList = null;
+    protected MoviePoster[] mMovieList = null;
 
     private ActivityMainBinding mMainBinding;
 
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements
         mMainBinding.rvMoviePosters.setAdapter(mMovieGridAdapter);
 
         if (savedInstanceState != null) {
-            mMovieList = (Movie[]) savedInstanceState.getParcelableArray(EXTRA_MOVIE_ARRAY);
+            mMovieList = (MoviePoster[]) savedInstanceState.getParcelableArray(EXTRA_MOVIE_ARRAY);
         }
 
         if (mMovieList != null) {
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements
      * Listen to click events on the recycler view
      * @param clickedMovie
      */
-    public void onMoviePosterClick(Movie clickedMovie) {
+    public void onMoviePosterClick(MoviePoster clickedMovie) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
         intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, clickedMovie);
         startActivity(intent);
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
+    public Loader<MoviePoster[]> onCreateLoader(int id, Bundle args) {
         String moviePath = null;
         if (args != null) {
             moviePath = args.getString(FetchMovieListTaskLoader.MOVIE_PATH_KEY);
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoadFinished(Loader<Movie[]> loader, Movie[] data) {
+    public void onLoadFinished(Loader<MoviePoster[]> loader, MoviePoster[] data) {
         mMovieGridAdapter.setMovieList(data);
         if (data == null) {
             this.showLoadingError();
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoaderReset(Loader<Movie[]> loader) {
+    public void onLoaderReset(Loader<MoviePoster[]> loader) {
 
     }
 }
