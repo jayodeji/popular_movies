@@ -25,7 +25,7 @@
         <ScrollView
             android:id="@+id/sv_movie_detail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/tv_movie_title"
             android:layout_marginTop="@dimen/activity_detail_margin"
             android:visibility="visible">
@@ -52,10 +52,21 @@
                     tools:text="2016" />
 
                 <TextView
-                    android:id="@+id/tv_movie_rating"
+                    android:id="@+id/tv_runtime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_release_date"
+                    android:layout_toRightOf="@+id/iv_movie_thumbnail"
+                    android:layout_marginTop="@dimen/activity_detail_top_margin"
+                    android:layout_marginLeft="@dimen/activity_detail_left_margin"
+                    android:textSize="@dimen/runtime_size"
+                    tools:text="120min"/>
+
+                <TextView
+                    android:id="@+id/tv_movie_rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_runtime"
                     android:layout_toRightOf="@+id/iv_movie_thumbnail"
                     android:layout_marginTop="@dimen/activity_detail_top_margin"
                     android:layout_marginLeft="@dimen/activity_detail_left_margin"
@@ -71,6 +82,35 @@
                     android:layout_marginTop="@dimen/activity_detail_top_margin"
                     android:textSize="@dimen/generic_text_size"
                     tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy." />
+
+                <LinearLayout
+                    android:id="@+id/ll_trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_movie_overview"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:textColor="@android:color/black"
+                        android:text="@string/trailer_section_caption"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_movie_trailers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/activity_detail_top_margin"/>
+
+                </LinearLayout>
+
+
             </RelativeLayout>
 
         </ScrollView>

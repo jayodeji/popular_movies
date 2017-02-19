@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/iv_play_icon"
+        android:layout_width="@dimen/play_icon"
+        android:layout_height="@dimen/play_icon"
+        android:layout_marginStart="@dimen/play_icon_left_margin"
+        android:layout_marginLeft="@dimen/play_icon_left_margin"
+        android:src="@drawable/ic_media_controls_play_icon"/>
+
+    <TextView
+        android:id="@+id/tv_trailer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/trailer_text_left_margin"
+        android:layout_marginStart="@dimen/trailer_text_left_margin"
+        android:layout_marginRight="@dimen/trailer_text_right_margin"
+        android:layout_marginEnd="@dimen/trailer_text_right_margin"
+        android:textSize="@dimen/generic_text_size"
+        tools:text="Trailer International"/>
+
+</LinearLayout>

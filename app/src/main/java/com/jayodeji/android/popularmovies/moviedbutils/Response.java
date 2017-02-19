@@ -1,5 +1,6 @@
 package com.jayodeji.android.popularmovies.moviedbutils;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.jayodeji.android.popularmovies.data.Movie;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -24,7 +26,10 @@ public class Response {
 
     private static final String TAG = Response.class.getSimpleName();
 
+    private static final String YOUTUBE_URL = "https://youtu.be";
+
     private static final String TYPE_TRAILER = "trailer";
+    private static final String VIDEO_SITE_YOUTUBE = "youtube";
 
     private static final String MDB_RESULTS = "results";
 
@@ -39,6 +44,7 @@ public class Response {
     private static final String MDB_VIDEO_TYPE = "type";
     private static final String MDB_VIDEO_NAME = "name";
     private static final String MDB_VIDEO_KEY = "key";
+    private static final String MDB_VIDEO_SITE = "site";
 
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w500";
@@ -88,28 +94,41 @@ public class Response {
     }
 
     private static Trailer[] getTrailersFromMovieDetail(JSONObject videoJsonObject) throws JSONException {
-        Trailer[] trailerList = null;
+        ArrayList<Trailer> trailerArrayList = new ArrayList<Trailer>();
         if (videoJsonObject != null) {
             JSONArray resultsArray = videoJsonObject.getJSONArray(MDB_RESULTS);
 
             int numResults = resultsArray.length();
-            trailerList = new Trailer[numResults];
 
             for (int ii=0; ii<numResults; ii++) {
                 JSONObject trailerJson = resultsArray.getJSONObject(ii);
-                //the video has to be a trailer
-                if (trailerJson.getString(MDB_VIDEO_TYPE).equals(TYPE_TRAILER)) {
-                    Trailer.Builder builder = new Trailer.Builder();
-                    builder.key(trailerJson.getString(MDB_VIDEO_KEY))
-                            .name(trailerJson.getString(MDB_VIDEO_NAME));
+                //the video has to be a Trailer
+                String videoType = trailerJson.getString(MDB_VIDEO_TYPE).toLowerCase();
+                String videoSite = trailerJson.getString(MDB_VIDEO_SITE).toLowerCase();
 
-                    trailerList[ii] = builder.build();
+                if (videoType.equals(TYPE_TRAILER) && videoSite.equals(VIDEO_SITE_YOUTUBE)) {
+                    String key = trailerJson.getString(MDB_VIDEO_KEY);
+
+                    Trailer.Builder builder = new Trailer.Builder();
+                    builder.key(key)
+                            .name(trailerJson.getString(MDB_VIDEO_NAME))
+                            .url(formatYoutubeUrl(key));
+
+                    trailerArrayList.add(builder.build());
                 }
             }
         }
+        if (trailerArrayList.isEmpty()) {
+            return null;
+        }
+        Trailer[] trailerList = new Trailer[trailerArrayList.size()];
+        trailerList = trailerArrayList.toArray(trailerList);
         return trailerList;
     }
 
+    private static String formatYoutubeUrl(String videoKey) {
+        return YOUTUBE_URL + "/" + videoKey;
+    }
     private static String formatUserRating(String rating) {
         return rating + "/10";
     }

@@ -29,4 +29,15 @@
     <!--Dimensions for release date-->
     <dimen name="release_date_size">25sp</dimen>
 
+    <!--Dimensions for runtime-->
+    <dimen name="runtime_size">25sp</dimen>
+
+    <!--Dimensions for the play icon-->
+    <dimen name="play_icon">35dp</dimen>
+    <dimen name="play_icon_left_margin">16dp</dimen>
+
+    <!--Dimensions for trailer text-->
+    <dimen name="trailer_text_left_margin">10dp</dimen>
+    <dimen name="trailer_text_right_margin">10dp</dimen>
+
 </resources>

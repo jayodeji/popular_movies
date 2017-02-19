@@ -14,6 +14,8 @@
     <string name="sort_most_popular">Most Popular</string>
     <string name="sort_highest_rated">Highest Rated</string>
 
+    <string name="trailer_section_caption">Trailers:</string>
+
     <!--PUT API SECRET KEY HERE-->
     <!--<string name="movie_db_api_key">XXXXX</string>-->
 </resources>
