@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="@dimen/trailer_box_height"
     android:orientation="horizontal">
 
     <ImageView
@@ -12,7 +13,10 @@
         android:layout_height="@dimen/play_icon"
         android:layout_marginStart="@dimen/play_icon_left_margin"
         android:layout_marginLeft="@dimen/play_icon_left_margin"
-        android:src="@drawable/ic_media_controls_play_icon"/>
+        android:src="@drawable/ic_media_controls_play_icon"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
     <TextView
         android:id="@+id/tv_trailer_title"
@@ -20,9 +24,18 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/trailer_text_left_margin"
         android:layout_marginStart="@dimen/trailer_text_left_margin"
-        android:layout_marginRight="@dimen/trailer_text_right_margin"
-        android:layout_marginEnd="@dimen/trailer_text_right_margin"
         android:textSize="@dimen/generic_text_size"
-        tools:text="Trailer International"/>
+        app:layout_constraintTop_toBottomOf="@+id/iv_play_icon"
+        app:layout_constraintBottom_toTopOf="@+id/iv_play_icon"
+        app:layout_constraintLeft_toRightOf="@+id/iv_play_icon"
+        tools:text="Trailer 1"/>
 
-</LinearLayout>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/horizontal_line_height"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>
