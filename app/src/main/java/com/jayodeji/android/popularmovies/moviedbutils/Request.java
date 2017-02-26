@@ -28,7 +28,8 @@ public class Request {
 
     private static final String API_KEY_PARAM = "api_key";
     private static final String APPEND_TO_PARAM = "append_to_response";
-    private static final String VIDEO_PARAM_VALUE = "videos";
+    private static final String TRAILERS_PARAM_VALUE = "trailers";
+    private static final String REVIEWS_PARAM_VALUE = "reviews";
 
     /**
      * Append the videos for the movie also, so we do not have to make a separate request for the trailers
@@ -38,7 +39,9 @@ public class Request {
     public static Movie getMovieDetail(Context context, int movieId) {
         String path = MOVIE_PATH + "/" + movieId;
         Uri.Builder uriBuilder = getBaseUriWithAuthentication(context, path);
-        uriBuilder.appendQueryParameter(APPEND_TO_PARAM, VIDEO_PARAM_VALUE);
+
+        String appendValues = TRAILERS_PARAM_VALUE + "," + REVIEWS_PARAM_VALUE;
+        uriBuilder.appendQueryParameter(APPEND_TO_PARAM, appendValues);
         URL url = buildUrlFromUri(uriBuilder);
 
         Movie movie = null;

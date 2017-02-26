@@ -133,6 +133,26 @@
                     app:layout_constraintLeft_toLeftOf="@+id/tv_trailer_caption"
                     app:layout_constraintRight_toRightOf="@+id/tv_trailer_caption"/>
 
+                <TextView
+                    android:id="@+id/tv_review_caption"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textSize="24sp"
+                    android:textColor="@android:color/black"
+                    android:text="@string/review_section_caption"
+                    app:layout_constraintTop_toBottomOf="@+id/rv_movie_trailers"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_movie_reviews"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_review_caption"
+                    app:layout_constraintLeft_toLeftOf="@+id/tv_review_caption"
+                    app:layout_constraintRight_toRightOf="@+id/tv_review_caption"/>
+
             </android.support.constraint.ConstraintLayout>
 
         </ScrollView>
@@ -151,8 +171,8 @@
 
         <ProgressBar
             android:id="@+id/pb_loading_indicator"
-            android:layout_width="@dimen/progress_bar_width"
-            android:layout_height="@dimen/progress_bar_height"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintTop_toBottomOf="parent"

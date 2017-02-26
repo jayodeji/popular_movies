@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.jayodeji.android.popularmovies.data.Movie;
+import com.jayodeji.android.popularmovies.data.Review;
 import com.jayodeji.android.popularmovies.data.Trailer;
 import com.jayodeji.android.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.jayodeji.android.popularmovies.loaders.FetchMovieDetailTaskLoader;
@@ -21,6 +22,7 @@ import com.squareup.picasso.Picasso;
 
 public class MovieDetailActivity extends AppCompatActivity implements
         TrailerListAdapter.TrailerClickListener,
+        ReviewListAdapter.ReviewClickListener,
         LoaderManager.LoaderCallbacks<Movie> {
 
     private static final String TAG = MovieDetailActivity.class.getSimpleName();
@@ -87,6 +89,12 @@ public class MovieDetailActivity extends AppCompatActivity implements
         mMovieDetailBinding.rvMovieTrailers.setHasFixedSize(true);
         mMovieDetailBinding.rvMovieTrailers.setAdapter(trailerListAdapter);
 
+        //add reviews as an adapter
+        ReviewListAdapter reviewListAdapter = new ReviewListAdapter(this, movie.reviews);
+        LinearLayoutManager reviewLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mMovieDetailBinding.rvMovieReviews.setLayoutManager(reviewLayoutManager);
+        mMovieDetailBinding.rvMovieReviews.setHasFixedSize(true);
+        mMovieDetailBinding.rvMovieReviews.setAdapter(reviewListAdapter);
     }
 
     private void showMovieDetail() {
@@ -146,6 +154,20 @@ public class MovieDetailActivity extends AppCompatActivity implements
             startActivity(intent);
         } else {
             Log.d(TAG, "Couldn't call " + youtubeUri.toString() + ", no receiving apps installed");
+        }
+    }
+
+    @Override
+    public void onReviewClicked(Review clickedReview) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri reviewUri = Uri.parse(clickedReview.url);
+        intent.setData(reviewUri);
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            Log.v(TAG, "Called " + reviewUri.toString());
+            startActivity(intent);
+        } else {
+            Log.d(TAG, "Couldn't call " + reviewUri.toString() + ", no receicing apps installed");
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.jayodeji.android.popularmovies.moviedbutils;
 
-import android.net.Uri;
 import android.util.Log;
 
 import com.jayodeji.android.popularmovies.data.Movie;
 import com.jayodeji.android.popularmovies.data.MoviePoster;
+import com.jayodeji.android.popularmovies.data.Review;
 import com.jayodeji.android.popularmovies.data.Trailer;
 
 import org.json.JSONArray;
@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,9 +27,6 @@ public class Response {
 
     private static final String YOUTUBE_URL = "https://youtu.be";
 
-    private static final String TYPE_TRAILER = "trailer";
-    private static final String VIDEO_SITE_YOUTUBE = "youtube";
-
     private static final String MDB_RESULTS = "results";
 
     private static final String MDB_MOVIE_ID = "id";
@@ -40,11 +36,14 @@ public class Response {
     private static final String MDB_AVERAGE_VOTE = "vote_average";
     private static final String MDB_RELEASE_DATE = "release_date";
     private static final String MDB_RUNTIME = "runtime";
-    private static final String MDB_VIDEOS = "videos";
-    private static final String MDB_VIDEO_TYPE = "type";
-    private static final String MDB_VIDEO_NAME = "name";
-    private static final String MDB_VIDEO_KEY = "key";
-    private static final String MDB_VIDEO_SITE = "site";
+    private static final String MDB_TRAILERS = "trailers";
+    private static final String MDB_YOUTUBE = "youtube";
+    private static final String MDB_TRAILER_NAME = "name";
+    private static final String MDB_TRAILER_SOURCE = "source";
+    private static final String MDB_REVIEWS = "reviews";
+    private static final String MDB_AUTHOR = "author";
+    private static final String MDB_ID = "id";
+    private static final String MDB_URL = "url";
 
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w500";
@@ -86,44 +85,56 @@ public class Response {
                     .runtime(movieJson.getInt(MDB_RUNTIME))
                     .rating(formatUserRating(movieJson.getString(MDB_AVERAGE_VOTE)))
                     .overview(movieJson.getString(MDB_OVERVIEW))
-                    .trailers(getTrailersFromMovieDetail(movieJson.getJSONObject(MDB_VIDEOS)));
+                    .trailers(getTrailersFromMovieDetail(movieJson.getJSONObject(MDB_TRAILERS)))
+                    .reviews(getReviewsFromMovieDetail(movieJson.getJSONObject(MDB_REVIEWS)));
 
             movie = builder.build();
         }
         return movie;
     }
 
-    private static Trailer[] getTrailersFromMovieDetail(JSONObject videoJsonObject) throws JSONException {
-        ArrayList<Trailer> trailerArrayList = new ArrayList<Trailer>();
-        if (videoJsonObject != null) {
-            JSONArray resultsArray = videoJsonObject.getJSONArray(MDB_RESULTS);
+    private static Trailer[] getTrailersFromMovieDetail(JSONObject trailersJsonObject) throws JSONException {
+        Trailer[] trailerList = null;
 
-            int numResults = resultsArray.length();
+        if (trailersJsonObject != null) {
+            JSONArray youtubeVideos = trailersJsonObject.getJSONArray(MDB_YOUTUBE);
+            if (youtubeVideos != null) {
+                int numTrailers = youtubeVideos.length();
+                trailerList = new Trailer[numTrailers];
 
-            for (int ii=0; ii<numResults; ii++) {
-                JSONObject trailerJson = resultsArray.getJSONObject(ii);
-                //the video has to be a Trailer
-                String videoType = trailerJson.getString(MDB_VIDEO_TYPE).toLowerCase();
-                String videoSite = trailerJson.getString(MDB_VIDEO_SITE).toLowerCase();
+                for (int ii=0; ii<numTrailers; ii++) {
+                    JSONObject trailerJson = youtubeVideos.getJSONObject(ii);
 
-                if (videoType.equals(TYPE_TRAILER) && videoSite.equals(VIDEO_SITE_YOUTUBE)) {
-                    String key = trailerJson.getString(MDB_VIDEO_KEY);
+                    String key = trailerJson.getString(MDB_TRAILER_SOURCE);
 
                     Trailer.Builder builder = new Trailer.Builder();
                     builder.key(key)
-                            .name(trailerJson.getString(MDB_VIDEO_NAME))
+                            .name(trailerJson.getString(MDB_TRAILER_NAME))
                             .url(formatYoutubeUrl(key));
-
-                    trailerArrayList.add(builder.build());
+                    trailerList[ii] = builder.build();
                 }
             }
         }
-        if (trailerArrayList.isEmpty()) {
-            return null;
-        }
-        Trailer[] trailerList = new Trailer[trailerArrayList.size()];
-        trailerList = trailerArrayList.toArray(trailerList);
         return trailerList;
+    }
+
+    private static Review[] getReviewsFromMovieDetail(JSONObject reviewsJsonObject) throws JSONException {
+        Review[] reviewList = null;
+        if (reviewsJsonObject != null) {
+            JSONArray resultList = reviewsJsonObject.getJSONArray(MDB_RESULTS);
+            int numReviews = resultList.length();
+            reviewList = new Review[numReviews];
+
+            for (int ii=0; ii<numReviews; ii++) {
+                JSONObject reviewJson = resultList.getJSONObject(ii);
+                Review.Builder builder = new Review.Builder();
+                builder.reviewId(reviewJson.getString(MDB_ID))
+                        .author(reviewJson.getString(MDB_AUTHOR))
+                        .url(reviewJson.getString(MDB_URL));
+                reviewList[ii] = builder.build();
+            }
+        }
+        return reviewList;
     }
 
     private static String formatYoutubeUrl(String videoKey) {

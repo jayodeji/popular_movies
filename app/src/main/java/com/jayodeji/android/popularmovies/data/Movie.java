@@ -18,6 +18,7 @@ public class Movie implements Parcelable {
     public final String releaseDate;
     public final int runtime;
     public final Trailer[] trailers;
+    public final Review[] reviews;
 
     private Movie(Builder builder) {
         movieId = builder.newMovieId;
@@ -29,6 +30,7 @@ public class Movie implements Parcelable {
         releaseDate = builder.newReleaseDate;
         runtime = builder.newRuntime;
         trailers = builder.newTrailers;
+        reviews = builder.newReviews;
     }
 
     protected Movie(Parcel in) {
@@ -41,6 +43,7 @@ public class Movie implements Parcelable {
         releaseDate = in.readString();
         runtime = in.readInt();
         trailers = in.createTypedArray(Trailer.CREATOR);
+        reviews = in.createTypedArray(Review.CREATOR);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -71,6 +74,7 @@ public class Movie implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeInt(runtime);
         dest.writeTypedArray(trailers, flags);
+        dest.writeTypedArray(reviews, flags);
     }
 
     public static class Builder {
@@ -83,6 +87,7 @@ public class Movie implements Parcelable {
         private String newReleaseDate;
         private int newRuntime;
         private Trailer[] newTrailers;
+        private Review[] newReviews;
 
         public Builder movieId(int movieId) {
             newMovieId = movieId;
@@ -125,6 +130,11 @@ public class Movie implements Parcelable {
 
         public Builder trailers(Trailer[] trailers) {
             newTrailers = trailers;
+            return this;
+        }
+
+        public Builder reviews(Review[] reviews) {
+            newReviews = reviews;
             return this;
         }
 
