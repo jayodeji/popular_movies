@@ -1,11 +1,14 @@
 package com.jayodeji.android.popularmovies.providers;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -85,7 +88,7 @@ public class FavoriteMovieProvider extends ContentProvider {
     }
 
     private Cursor makeSelectionQuery(String tableName, String[] columns, String selection, String[] selectionArgs, String sortOrder) {
-        SQLiteDatabase db = mMovieDbHelper.getReadableDatabase();
+        final SQLiteDatabase db = mMovieDbHelper.getReadableDatabase();
         return db.query(
                 tableName,
                 columns,
@@ -97,10 +100,26 @@ public class FavoriteMovieProvider extends ContentProvider {
         );
     }
 
-    @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
-        throw new RuntimeException("'insert' is not implemented here. Use 'bulkInsert' instead.");
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
+        final SQLiteDatabase db = mMovieDbHelper.getWritableDatabase();
+        Uri returnUri;
+
+        switch (sUriMatcher.match(uri)) {
+            case CODE_MOVIE:
+                long insertId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+                if (insertId > 0) {
+                    returnUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, insertId);
+                } else {
+                    throw new SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnUri;
     }
 
     @Override
@@ -110,7 +129,7 @@ public class FavoriteMovieProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        throw new RuntimeException("'update' is not implemented here. Delete and insert instead.");
+        throw new RuntimeException("'update' is not implemented here.");
     }
 
     @Nullable

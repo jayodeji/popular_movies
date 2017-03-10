@@ -11,20 +11,18 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.os.ParcelableCompat;
 
 import com.jayodeji.android.popularmovies.dbcontract.MovieContract;
 import com.jayodeji.android.popularmovies.dbcontract.MovieDbHelper;
 import com.jayodeji.android.popularmovies.providers.FavoriteMovieProvider;
+import com.jayodeji.android.popularmovies.utils.FavoriteMovieProviderTestUtils;
+import com.jayodeji.android.popularmovies.utils.MovieTestInfo;
 import com.jayodeji.android.popularmovies.utils.TestUtilities;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Arrays;
-import java.util.Comparator;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
@@ -44,7 +42,7 @@ public class TestFavoriteMovieProvider {
     public void before() {
         mDbHelper = (SQLiteOpenHelper) new MovieDbHelper(mContext);
         mDatabase = (SQLiteDatabase) mDbHelper.getWritableDatabase();
-        clearAllRecords();
+        FavoriteMovieProviderTestUtils.clearAllRecords(mDatabase);
     }
 
     @After
@@ -78,7 +76,7 @@ public class TestFavoriteMovieProvider {
 
     @Test
     public void testFavoriteMovieListQueryReturnsListOfFavoriteMovies() {
-        MovieTestInfo[] movieList = insertMultipleMoviesIntoDatabase(4);
+        MovieTestInfo[] movieList = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 4);
 
         String[] columns = {
                 MovieContract.MovieEntry.COLUMN_POSTER_URL,
@@ -106,7 +104,7 @@ public class TestFavoriteMovieProvider {
 
     @Test
     public void testMovieTrailersQueryReturnsListOfTrailersBelongingToAMovie() {
-        MovieTestInfo movieObject = insertMultipleMoviesIntoDatabase(2)[0];
+        MovieTestInfo movieObject = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 2)[0];
         String[] columns = {
                 MovieContract.TrailerEntry.COLUMN_EXTERNAL_MOVIE_ID,
                 MovieContract.TrailerEntry.COLUMN_KEY,
@@ -134,7 +132,7 @@ public class TestFavoriteMovieProvider {
 
     @Test
     public void testMovieReviewsQueryReturnsListOfReviewsBelongingToAMovie() {
-        MovieTestInfo movieObject = insertMultipleMoviesIntoDatabase(3)[0];
+        MovieTestInfo movieObject = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 3)[0];
         String[] columns = {
                 MovieContract.ReviewEntry.COLUMN_EXTERNAL_MOVIE_ID,
                 MovieContract.ReviewEntry.COLUMN_AUTHOR,
@@ -160,88 +158,49 @@ public class TestFavoriteMovieProvider {
         TestUtilities.validateListOfRecords(errorMessage, reviewsCursor, reviews, columns);
     }
 
-    private void clearAllRecords() {
-        mDatabase.delete(MovieContract.MovieEntry.TABLE_NAME, null, null);
-        mDatabase.delete(MovieContract.ReviewEntry.TABLE_NAME, null, null);
-        mDatabase.delete(MovieContract.TrailerEntry.TABLE_NAME, null, null);
+    @Test
+    public void testCanGetMovieUsingMovieId() {
+        fail("Not implemented yet");
     }
 
+    @Test
+    public void testCanInsertMovieUsingContentProvider() {
+        ContentValues movie = TestUtilities.createTestMovieContentValues();
+        Uri movieUri = mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, movie);
 
-    private MovieTestInfo[] insertMultipleMoviesIntoDatabase(int numRecords) {
-        int numReviews = 2;
-        int numTrailers = 3;
+        String selection = MovieContract.MovieEntry._ID + " = ?";
+        String[] selectionArgs = {movieUri.getLastPathSegment()};
 
-        MovieTestInfo[] movieList = new MovieTestInfo[numRecords];
-
-        mDatabase.beginTransaction();
-        try {
-            for (int ii=0; ii<numRecords; ii++) {
-                ContentValues movie = TestUtilities.createTestMovieContentValues();
-                int movieId = movie.getAsInteger(MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID);
-
-                long _id = TestUtilities.insertRecordIntoDb(
-                        mDatabase,
-                        MovieContract.MovieEntry.TABLE_NAME,
-                        movie
-                );
-                movie.put(MovieContract.MovieEntry._ID, _id);
-
-                ContentValues[] trailers = insertMultipleTrailers(numTrailers, movieId);
-                ContentValues[] reviews = insertMultipleReviews(numReviews, movieId);
-
-                MovieTestInfo movieTestInfo = new MovieTestInfo(movie, trailers, reviews);
-                movieList[ii] = movieTestInfo;
-            }
-            mDatabase.setTransactionSuccessful();
-        } finally {
-            mDatabase.endTransaction();
-        }
-
-        return movieList;
+        Cursor savedMovie = mDatabase.query(
+                MovieContract.MovieEntry.TABLE_NAME,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        String errorMessage = "Movie was not properly inserted: ";
+        TestUtilities.validateThenCloseCursor(errorMessage, savedMovie, movie);
     }
 
-    private ContentValues[] insertMultipleTrailers(int numRecords, int movieId) {
-        ContentValues[] trailerList = new ContentValues[numRecords];
-        for (int ii=0; ii<numRecords; ii++) {
-            ContentValues trailer = TestUtilities.createTestTrailerContentValues();
-            trailer.put(MovieContract.TrailerEntry.COLUMN_EXTERNAL_MOVIE_ID, movieId);
-            long _id = TestUtilities.insertRecordIntoDb(
-                    mDatabase,
-                    MovieContract.TrailerEntry.TABLE_NAME,
-                    trailer
-            );
-            trailer.put(MovieContract.TrailerEntry._ID, _id);
-            trailerList[ii] = trailer;
-        }
-        return trailerList;
+    @Test
+    public void testCanInsertMultipleReviewsBelongingToAnExistingMovie() {
+        fail("Not implemented");
     }
 
-    private ContentValues[] insertMultipleReviews(int numRecords, int movieId) {
-        ContentValues[] reviewList = new ContentValues[numRecords];
-        for (int ii=0; ii<numRecords; ii++) {
-            ContentValues review = TestUtilities.createTestReviewContentValues();
-            review.put(MovieContract.ReviewEntry.COLUMN_EXTERNAL_MOVIE_ID, movieId);
-            long _id = TestUtilities.insertRecordIntoDb(
-                    mDatabase,
-                    MovieContract.ReviewEntry.TABLE_NAME,
-                    review
-            );
-            review.put(MovieContract.ReviewEntry._ID, _id);
-            reviewList[ii] = review;
-        }
-        return reviewList;
+    @Test
+    public void testCanInsertMultipleTrailersBelongingToAnExistingMovie() {
+        fail("Not implemented");
     }
 
-    private class MovieTestInfo {
+    @Test
+    public void testCanInsertAMovieWithTrailersAndReviewsInOneTransaction() {
+        fail("Not implemented");
+    }
 
-        public final ContentValues movie;
-        public final ContentValues[] trailers;
-        public final ContentValues[] reviews;
-
-        public MovieTestInfo(ContentValues movie, ContentValues[] trailers, ContentValues[] reviews) {
-            this.movie = movie;
-            this.trailers = trailers;
-            this.reviews = reviews;
-        }
+    @Test
+    public void testCanDeleteAMovieWhichDeletesAllReviewsAndTrailers() {
+        fail("Not implemented");
     }
 }

@@ -57,6 +57,7 @@ public class MovieContract {
         public static String getTableDeletionSql() {
             return "DROP TABLE IF EXISTS " + TABLE_NAME;
         }
+
     }
 
     public static final class TrailerEntry implements BaseColumns {
