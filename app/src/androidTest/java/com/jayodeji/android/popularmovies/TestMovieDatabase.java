@@ -20,10 +20,7 @@ import org.junit.runner.RunWith;
 import java.util.HashSet;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 
 /**
  * Created by joshuaadeyemi on 2/26/17.

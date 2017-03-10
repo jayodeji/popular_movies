@@ -14,9 +14,15 @@ public class MovieContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_FAVORITES = "favorites";
+    public static final String PATH_TRAILERS = "trailers";
+    public static final String PATH_REVIEWS = "reviews";
 
 
     public static final class MovieEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_FAVORITES)
+                .build();
 
         public static final String TABLE_NAME = "movie";
 
@@ -55,6 +61,10 @@ public class MovieContract {
 
     public static final class TrailerEntry implements BaseColumns {
 
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_TRAILERS)
+                .build();
+
         public static final String TABLE_NAME = "trailer";
 
         public static final String COLUMN_NAME = "name";
@@ -86,6 +96,10 @@ public class MovieContract {
     }
 
     public static final class ReviewEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_REVIEWS)
+                .build();
 
         public static final String TABLE_NAME = "review";
 

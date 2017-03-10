@@ -6,8 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.jayodeji.android.popularmovies.dbcontract.MovieContract;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
+
+import io.bloco.faker.Faker;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -21,10 +25,12 @@ import static junit.framework.Assert.assertTrue;
 
 public class TestUtilities {
 
+    private static Faker sFaker = new Faker();
 
-    public static void insertRecordIntoDb(SQLiteDatabase db, String tableName, ContentValues data) {
+    public static long insertRecordIntoDb(SQLiteDatabase db, String tableName, ContentValues data) {
         long insertedId = db.insert(tableName, null, data);
         validateDataInsertedSuccessfullyIntoDb(insertedId);
+        return insertedId;
     }
 
     public static void  validateDataInsertedSuccessfullyIntoDb(long insertedId) {
@@ -57,16 +63,56 @@ public class TestUtilities {
         }
     }
 
-    public static ContentValues createTestMovieContentValues() {
-        String overViewString = "A rogue band of resistance fighters unite for a mission to steal " +
-                "the Death Star plans and bring a new hope to the galaxy.";
+    public static void validateListOfRecords(String error, Cursor recordsListCursor, ContentValues[] expectedValues, String[] columns) {
+        //validate that they are the same length first
+        String errorMessage = "Elements are not equals: " + error;
+        assertEquals(errorMessage, expectedValues.length, recordsListCursor.getCount());
 
+        //what happens if the order of objects is different?
+        for (int ii=0; ii<expectedValues.length; ii++) {
+            recordsListCursor.moveToPosition(ii);
+            ContentValues expected = new ContentValues();
+            for (String column: columns) {
+                expected.put(column, expectedValues[ii].getAsString(column));
+            }
+            validateCurrentRecord(error, recordsListCursor, expected);
+        }
+        recordsListCursor.close();
+    }
+
+    /**
+     * Always sort this in ascending order
+     * @param content
+     * @return
+     */
+    public static ContentValues[] sortContentList(ContentValues[] content, final String sortColumn, String order) {
+        final int multiplier;
+        if (order == null || order.toLowerCase() == "asc") {
+            multiplier = 1;
+        } else {
+            multiplier = -1;
+        }
+
+        Arrays.sort(content, new Comparator<ContentValues>() {
+            @Override
+            public int compare(ContentValues o1, ContentValues o2) {
+                String o1Key = o1.getAsString(sortColumn);
+                String o2Key = o2.getAsString(sortColumn);
+                //multiplying by the multiplier reverses if order is to be reversed
+                return o1Key.compareTo(o2Key) * multiplier;
+            }
+        });
+        return content;
+    }
+
+    public static ContentValues createTestMovieContentValues() {
         ContentValues testMovieValues = new ContentValues();
-        testMovieValues.put(MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID, 127380);
-        testMovieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "Test Movie III");
+        testMovieValues.put(MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID, Integer.parseInt(sFaker.number.number(6)));
+        testMovieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "Test Movie " + sFaker.number.number(6));
+        testMovieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, sFaker.lorem.paragraph(3));
+
         testMovieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_URL, "http://post.er/url.jpg");
         testMovieValues.put(MovieContract.MovieEntry.COLUMN_THUMBNAIL_URL, "http://thumbna.il/url.jpg");
-        testMovieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, overViewString);
         testMovieValues.put(MovieContract.MovieEntry.COLUMN_RATING, 7.4);
         testMovieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_YEAR, 2015);
         testMovieValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME, 120);
@@ -74,18 +120,20 @@ public class TestUtilities {
     }
 
     public static ContentValues createTestTrailerContentValues() {
+        String youtubeKey = sFaker.number.number(10).toString();
         ContentValues testTrailerValues = new ContentValues();
         testTrailerValues.put(MovieContract.TrailerEntry.COLUMN_NAME, "first trailer");
-        testTrailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, "youtube1");
-        testTrailerValues.put(MovieContract.TrailerEntry.COLUMN_URL, "http://youtu.be/youtube1");
+        testTrailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, youtubeKey);
+        testTrailerValues.put(MovieContract.TrailerEntry.COLUMN_URL, "http://youtu.be/"+ youtubeKey);
         return testTrailerValues;
     }
 
     public static ContentValues createTestReviewContentValues() {
+        String reviewKey = sFaker.number.number(10).toString();
         ContentValues testReviewValues = new ContentValues();
-        testReviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID, "review1");
+        testReviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID, reviewKey);
         testReviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, "reno");
-        testReviewValues.put(MovieContract.ReviewEntry.COLUMN_URL, "http://revi.ew/review1");
+        testReviewValues.put(MovieContract.ReviewEntry.COLUMN_URL, "http://revi.ew/"+reviewKey);
         return testReviewValues;
     }
 }
