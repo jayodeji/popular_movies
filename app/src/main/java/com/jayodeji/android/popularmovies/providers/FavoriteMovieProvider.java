@@ -44,7 +44,7 @@ public class FavoriteMovieProvider extends ContentProvider {
         /** This URI is content://com.jayodeji.android.popularmovies/favorties/# */
         String detailPath = MovieContract.PATH_FAVORITES + "/#";
         matcher.addURI(authority, detailPath, CODE_MOVIE_DETAIL);
-        
+
         /** This URI is content://com.jayodeji.android.popularmovies/trailers/ */
         matcher.addURI(authority, MovieContract.PATH_TRAILERS, CODE_MOVIE_TRAILERS);
 
@@ -164,6 +164,43 @@ public class FavoriteMovieProvider extends ContentProvider {
     }
 
     @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        int rowsInserted = 0;
+        switch (sUriMatcher.match(uri)) {
+            case CODE_MOVIE_TRAILERS:
+                rowsInserted = insertMultipleRecords(MovieContract.TrailerEntry.TABLE_NAME, values);
+                break;
+            case CODE_MOVIE_REVIEWS:
+                rowsInserted = insertMultipleRecords(MovieContract.ReviewEntry.TABLE_NAME, values);
+                break;
+            default:
+                return super.bulkInsert(uri, values);
+        }
+        if (rowsInserted > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsInserted;
+    }
+
+    private int insertMultipleRecords(String tableName, ContentValues[] records) {
+        final SQLiteDatabase db = mMovieDbHelper.getWritableDatabase();
+        int rowsInserted = 0;
+        db.beginTransaction();
+        try {
+            for (ContentValues value : records) {
+                long _id = db.insert(tableName, null, value);
+                if (_id != -1) {
+                    rowsInserted++;
+                }
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return rowsInserted;
+    }
+
+    @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         throw new RuntimeException("'delete' is not implemented yet.");
     }
@@ -176,6 +213,6 @@ public class FavoriteMovieProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(Uri uri) {
-        throw new RuntimeException("We are not implementing 'getType' in this app.");
+        return null;
     }
 }
