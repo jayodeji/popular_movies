@@ -26,6 +26,7 @@ public class FavoriteMovieProvider extends ContentProvider {
     private static final String TAG = FavoriteMovieProvider.class.getSimpleName();
 
     public static final int CODE_MOVIE = 100;
+    public static final int CODE_MOVIE_DETAIL = 101;
     public static final int CODE_MOVIE_TRAILERS = 102;
     public static final int CODE_MOVIE_REVIEWS = 104;
 
@@ -40,6 +41,10 @@ public class FavoriteMovieProvider extends ContentProvider {
         /** This URI is content://com.jayodeji.android.popularmovies/favorites/ */
         matcher.addURI(authority, MovieContract.PATH_FAVORITES, CODE_MOVIE);
 
+        /** This URI is content://com.jayodeji.android.popularmovies/favorties/# */
+        String detailPath = MovieContract.PATH_FAVORITES + "/#";
+        matcher.addURI(authority, detailPath, CODE_MOVIE_DETAIL);
+        
         /** This URI is content://com.jayodeji.android.popularmovies/trailers/ */
         matcher.addURI(authority, MovieContract.PATH_TRAILERS, CODE_MOVIE_TRAILERS);
 
@@ -61,7 +66,31 @@ public class FavoriteMovieProvider extends ContentProvider {
         String movieId;
         switch (sUriMatcher.match(uri)) {
             case CODE_MOVIE:
-                cursor = makeSelectionQuery(MovieContract.MovieEntry.TABLE_NAME, projection, null, null, sortOrder);
+                projection = new String[]{
+                        MovieContract.MovieEntry._ID,
+                        MovieContract.MovieEntry.COLUMN_POSTER_URL,
+                        MovieContract.MovieEntry.COLUMN_TITLE
+                };
+                if (sortOrder == null) {
+                    sortOrder = MovieContract.MovieEntry._ID + " DESC";
+                }
+
+                cursor = makeSelectionQuery(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        projection,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            case CODE_MOVIE_DETAIL:
+                cursor = makeSelectionQuery(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        projection,
+                        MovieContract.MovieEntry._ID + " = ? ",
+                        new String[]{uri.getLastPathSegment()},
+                        null
+                );
                 break;
             case CODE_MOVIE_TRAILERS:
                 movieId = uri.getQueryParameter(MovieContract.TrailerEntry.COLUMN_EXTERNAL_MOVIE_ID);
@@ -69,7 +98,13 @@ public class FavoriteMovieProvider extends ContentProvider {
                     selectionArgs = new String[]{movieId};
                     selection = MovieContract.TrailerEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ? ";
                 }
-                cursor = makeSelectionQuery(MovieContract.TrailerEntry.TABLE_NAME, projection, selection, selectionArgs, sortOrder);
+                cursor = makeSelectionQuery(
+                        MovieContract.TrailerEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        sortOrder
+                );
                 break;
             case CODE_MOVIE_REVIEWS:
                 movieId = uri.getQueryParameter(MovieContract.ReviewEntry.COLUMN_EXTERNAL_MOVIE_ID);
@@ -77,7 +112,13 @@ public class FavoriteMovieProvider extends ContentProvider {
                     selectionArgs = new String[]{movieId};
                     selection = MovieContract.ReviewEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ? ";
                 }
-                cursor = makeSelectionQuery(MovieContract.ReviewEntry.TABLE_NAME, projection, selection, selectionArgs, sortOrder);
+                cursor = makeSelectionQuery(
+                        MovieContract.ReviewEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        sortOrder
+                );
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

@@ -1,6 +1,7 @@
 package com.jayodeji.android.popularmovies;
 
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -75,31 +76,46 @@ public class TestFavoriteMovieProvider {
     }
 
     @Test
-    public void testFavoriteMovieListQueryReturnsListOfFavoriteMovies() {
+    public void testQueryForFavoriteMoviesWithoutIdReturnsListOfFavoriteMovies() {
         MovieTestInfo[] movieList = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 4);
-
-        String[] columns = {
-                MovieContract.MovieEntry.COLUMN_POSTER_URL,
-                MovieContract.MovieEntry.COLUMN_TITLE
-        };
-        String sortOrder = MovieContract.MovieEntry.COLUMN_TIMESTAMP + " DESC";
 
         Cursor movieListCursor = mContext.getContentResolver().query(
                 MovieContract.MovieEntry.CONTENT_URI,
-                columns,
                 null,
                 null,
-                sortOrder
+                null,
+                null
         );
 
         String errorMessage = "List of movies returned is not what was expected";
 
+        //extract out just the movies from the list of MovieTestInfo
         ContentValues[] movies = new ContentValues[movieList.length];
         for (int ii=0; ii<movieList.length; ii++) {
             movies[ii] = movieList[ii].movie;
         }
 
+        String[] columns = {
+                MovieContract.MovieEntry._ID,
+                MovieContract.MovieEntry.COLUMN_POSTER_URL,
+                MovieContract.MovieEntry.COLUMN_TITLE
+        };
+
+        TestUtilities.sortContentList(movies, MovieContract.MovieEntry._ID, "desc");
         TestUtilities.validateListOfRecords(errorMessage, movieListCursor, movies, columns);
+    }
+
+    @Test
+    public void testQueryForFavoriteMoviesWithIdReturnsJustOneMovie() {
+        MovieTestInfo[] movieList = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 2);
+        ContentValues movie = movieList[0].movie;
+        long movieId = movie.getAsLong(MovieContract.MovieEntry._ID);
+
+        Uri uri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, movieId);
+        Cursor movieCursor = mContext.getContentResolver().query(uri, null, null, null, null);
+
+        String errorMessage = "Cannot query for single movie.";
+        TestUtilities.validateThenCloseCursor(errorMessage, movieCursor, movie);
     }
 
     @Test
@@ -156,11 +172,6 @@ public class TestFavoriteMovieProvider {
 
         String errorMessage = "List of reviews returned is not what was expected";
         TestUtilities.validateListOfRecords(errorMessage, reviewsCursor, reviews, columns);
-    }
-
-    @Test
-    public void testCanGetMovieUsingMovieId() {
-        fail("Not implemented yet");
     }
 
     @Test
