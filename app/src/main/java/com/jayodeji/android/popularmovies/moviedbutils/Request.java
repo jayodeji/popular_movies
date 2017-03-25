@@ -32,7 +32,8 @@ public class Request {
     private static final String REVIEWS_PARAM_VALUE = "reviews";
 
     /**
-     * Append the videos for the movie also, so we do not have to make a separate request for the trailers
+     * Append the videos and reviews for the movie also, so we do not have to make a separate request
+     * for the trailers and reviews.
      * @param context
      * @return
      */

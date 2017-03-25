@@ -1,8 +1,11 @@
 package com.jayodeji.android.popularmovies.providers;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -15,6 +18,7 @@ import android.util.Log;
 import com.jayodeji.android.popularmovies.dbcontract.MovieContract;
 import com.jayodeji.android.popularmovies.dbcontract.MovieDbHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,7 +73,8 @@ public class FavoriteMovieProvider extends ContentProvider {
                 projection = new String[]{
                         MovieContract.MovieEntry._ID,
                         MovieContract.MovieEntry.COLUMN_POSTER_URL,
-                        MovieContract.MovieEntry.COLUMN_TITLE
+                        MovieContract.MovieEntry.COLUMN_TITLE,
+                        MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID
                 };
                 if (sortOrder == null) {
                     sortOrder = MovieContract.MovieEntry._ID + " DESC";
@@ -87,7 +92,7 @@ public class FavoriteMovieProvider extends ContentProvider {
                 cursor = makeSelectionQuery(
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,
-                        MovieContract.MovieEntry._ID + " = ? ",
+                        MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ? ",
                         new String[]{uri.getLastPathSegment()},
                         null
                 );
@@ -201,8 +206,44 @@ public class FavoriteMovieProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-        throw new RuntimeException("'delete' is not implemented yet.");
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = mMovieDbHelper.getWritableDatabase();
+        int movieDeleted = 0;
+        switch (sUriMatcher.match(uri)) {
+            case CODE_MOVIE_DETAIL:
+                String movieId = uri.getLastPathSegment();
+                db.beginTransaction();
+                try {
+                    //delete movie
+                    movieDeleted = db.delete(
+                            MovieContract.MovieEntry.TABLE_NAME,
+                            MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ? ",
+                            new String[]{movieId}
+                    );
+                    //delete trailers
+                    db.delete(
+                            MovieContract.TrailerEntry.TABLE_NAME,
+                            MovieContract.TrailerEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ?",
+                            new String[]{movieId}
+                    );
+                    //delete reviews
+                    db.delete(
+                            MovieContract.ReviewEntry.TABLE_NAME,
+                            MovieContract.ReviewEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ?",
+                            new String[]{movieId}
+                    );
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (movieDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return movieDeleted;
     }
 
     @Override

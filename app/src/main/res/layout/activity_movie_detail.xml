@@ -94,6 +94,23 @@
                     tools:text="7.9/10"/>
 
                 <TextView
+                    android:id="@+id/tv_mark_favorite"
+                    android:layout_width="@dimen/favorite_box_width"
+                    android:layout_height="@dimen/favorite_box_height"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/activity_detail_top_margin"
+                    android:layout_marginLeft="@dimen/activity_detail_left_margin"
+                    android:layout_marginStart="@dimen/activity_detail_left_margin"
+                    android:background="@color/colorFavoriteBackground"
+                    android:textAllCaps="true"
+                    android:textAlignment="center"
+                    android:text="@string/mark_as_favorite"
+                    app:layout_constraintLeft_toRightOf="@+id/iv_movie_thumbnail"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_movie_thumbnail"
+                    app:layout_constraintBottom_toTopOf="@+id/iv_movie_thumbnail"
+                    app:layout_constraintVertical_bias="0.47"/>
+
+                <TextView
                     android:id="@+id/tv_movie_overview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

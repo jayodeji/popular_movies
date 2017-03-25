@@ -81,6 +81,7 @@ public class Response {
             builder.movieId(movieJson.getInt(MDB_MOVIE_ID))
                     .title(movieJson.getString(MDB_TITLE))
                     .thumbnailUrl(generateThumbnailUrl(movieJson.getString(MDB_POSTER_PATH)))
+                    .posterUrl(generatePosterUrl(movieJson.getString(MDB_POSTER_PATH)))
                     .releaseDate(formatReleaseDate(movieJson.getString(MDB_RELEASE_DATE)))
                     .runtime(movieJson.getInt(MDB_RUNTIME))
                     .rating(formatUserRating(movieJson.getString(MDB_AVERAGE_VOTE)))

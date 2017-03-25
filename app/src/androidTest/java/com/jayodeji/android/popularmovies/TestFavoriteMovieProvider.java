@@ -1,6 +1,8 @@
 package com.jayodeji.android.popularmovies;
 
 import android.content.ComponentName;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 /**
@@ -79,13 +82,7 @@ public class TestFavoriteMovieProvider {
     public void testQueryForFavoriteMoviesWithoutIdReturnsListOfFavoriteMovies() {
         MovieTestInfo[] movieList = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 4);
 
-        Cursor movieListCursor = mContext.getContentResolver().query(
-                MovieContract.MovieEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
+        Cursor movieListCursor = mContext.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null,null, null);
 
         String errorMessage = "List of movies returned is not what was expected";
 
@@ -105,6 +102,7 @@ public class TestFavoriteMovieProvider {
         TestUtilities.validateListOfRecords(errorMessage, movieListCursor, movies, columns);
     }
 
+
     @Test
     public void testQueryForFavoriteMoviesWithIdReturnsJustOneMovie() {
         MovieTestInfo[] movieList = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 2);
@@ -117,6 +115,7 @@ public class TestFavoriteMovieProvider {
         String errorMessage = "Cannot query for single movie.";
         TestUtilities.validateThenCloseCursor(errorMessage, movieCursor, movie);
     }
+
 
     @Test
     public void testMovieTrailersQueryReturnsListOfTrailersBelongingToAMovie() {
@@ -145,6 +144,7 @@ public class TestFavoriteMovieProvider {
         String errorMessage = "List of trailers returned is not what was expected";
         TestUtilities.validateListOfRecords(errorMessage, trailersCursor, trailers, columns);
     }
+
 
     @Test
     public void testMovieReviewsQueryReturnsListOfReviewsBelongingToAMovie() {
@@ -177,7 +177,9 @@ public class TestFavoriteMovieProvider {
     @Test
     public void testCanInsertMovieUsingContentProvider() {
         ContentValues movie = TestUtilities.createTestMovieContentValues();
-        Uri movieUri = mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, movie);
+
+        ContentResolver contentResolver = mContext.getContentResolver();
+        Uri movieUri = contentResolver.insert(MovieContract.MovieEntry.CONTENT_URI, movie);
 
         String selection = MovieContract.MovieEntry._ID + " = ?";
         String[] selectionArgs = {movieUri.getLastPathSegment()};
@@ -195,6 +197,7 @@ public class TestFavoriteMovieProvider {
         TestUtilities.validateThenCloseCursor(errorMessage, savedMovie, movie);
     }
 
+
     @Test
     public void testAttemptingToInsertTrailersForNonexistentMovieFails() {
         ContentValues[] trailers = {TestUtilities.createTestMovieContentValues()};
@@ -204,6 +207,7 @@ public class TestFavoriteMovieProvider {
         );
         assertEquals("No records should have been inserted", 0, numInserted);
     }
+
 
     @Test
     public void testCanInsertMultipleTrailersBelongingToAnExistingMovie() {
@@ -217,31 +221,16 @@ public class TestFavoriteMovieProvider {
             trailers[ii] = trailer;
         }
 
-        int numInserted = mContext.getContentResolver().bulkInsert(
-                MovieContract.TrailerEntry.CONTENT_URI,
-                trailers
-        );
+        int numInserted = mContext.getContentResolver().bulkInsert(MovieContract.TrailerEntry.CONTENT_URI, trailers);
         assertEquals("Number of inserted records not what was expected", trailers.length, numInserted);
 
-        Cursor cursor = mDatabase.query(
-                MovieContract.TrailerEntry.TABLE_NAME,
-                null,
-                MovieContract.TrailerEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ? ",
-                new String[]{String.valueOf(externalMovieId)},
-                null,
-                null,
-                MovieContract.TrailerEntry.COLUMN_KEY + " ASC"
+        FavoriteMovieProviderTestUtils.validateEntriesMatchContentValues(
+                mDatabase,
+                MovieContract.TrailerEntry.class,
+                trailers,
+                externalMovieId
         );
 
-        trailers = TestUtilities.sortContentList(trailers, MovieContract.TrailerEntry.COLUMN_KEY, "asc");
-        String[] columns = {
-                MovieContract.TrailerEntry.COLUMN_EXTERNAL_MOVIE_ID,
-                MovieContract.TrailerEntry.COLUMN_URL,
-                MovieContract.TrailerEntry.COLUMN_NAME,
-                MovieContract.TrailerEntry.COLUMN_KEY
-        };
-        String errorMessage = "List of trailers returned is not what was expected";
-        TestUtilities.validateListOfRecords(errorMessage, cursor, trailers, columns);
     }
 
     @Test
@@ -272,39 +261,40 @@ public class TestFavoriteMovieProvider {
         );
         assertEquals("Number of inserted records not what was expected", reviews.length, numInserted);
 
-        Cursor cursor = mDatabase.query(
-                MovieContract.ReviewEntry.TABLE_NAME,
-                null,
-                MovieContract.ReviewEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ? ",
-                new String[]{String.valueOf(externalMovieId)},
-                null,
-                null,
-                MovieContract.ReviewEntry.COLUMN_REVIEW_ID + " ASC"
+        FavoriteMovieProviderTestUtils.validateEntriesMatchContentValues(
+                mDatabase,
+                MovieContract.ReviewEntry.class,
+                reviews,
+                externalMovieId
         );
-
-        reviews = TestUtilities.sortContentList(reviews, MovieContract.ReviewEntry.COLUMN_REVIEW_ID, "asc");
-        String[] columns = {
-                MovieContract.ReviewEntry.COLUMN_REVIEW_ID,
-                MovieContract.ReviewEntry.COLUMN_AUTHOR,
-                MovieContract.ReviewEntry.COLUMN_URL,
-                MovieContract.ReviewEntry.COLUMN_EXTERNAL_MOVIE_ID
-        };
-        String errorMessage = "List of reviews returned is not what was expected";
-        TestUtilities.validateListOfRecords(errorMessage, cursor, reviews, columns);
-    }
-
-    @Test
-    public void testCanInsertAMovieWithTrailersAndReviewsInOneTransaction() {
-        fail("Not implemented");
     }
 
     @Test
     public void testCanDeleteAMovieWhichDeletesAllReviewsAndTrailers() {
-        MovieTestInfo[] movieList = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 4);
+        MovieTestInfo[] movieList = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 2);
         MovieTestInfo movieToTest = movieList[0];
         long _id = movieToTest.movie.getAsLong(MovieContract.MovieEntry._ID);
+        int extMovieId = movieToTest.movie.getAsInteger(MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID);
 
-        Uri uri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, _id);
+        Uri uri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, extMovieId);
         mContext.getContentResolver().delete(uri, null, null);
+
+        //test that movie and trailers belonging to movie are null
+        Cursor movieCursor = FavoriteMovieProviderTestUtils.queryForEntries(mDatabase, MovieContract.MovieEntry.class, extMovieId);
+        assertTrue("Movie should have been deleted", movieCursor.getCount() == 0);
+        movieCursor.close();
+
+        Cursor trailerCursor = FavoriteMovieProviderTestUtils.queryForEntries(mDatabase, MovieContract.TrailerEntry.class, extMovieId);
+        assertTrue("Trailers should have been deleted", trailerCursor.getCount() == 0);
+        trailerCursor.close();
+
+        Cursor reviewCursor = FavoriteMovieProviderTestUtils.queryForEntries(mDatabase, MovieContract.ReviewEntry.class, extMovieId);
+        assertTrue("Reviews should have been deleted", reviewCursor.getCount() == 0);
+        reviewCursor.close();
+
+        //test that no other movies are deleted
+        for (int ii=1; ii<movieList.length; ii++) {
+            FavoriteMovieProviderTestUtils.validateMovieSavedWithTrailersAndReviews(mDatabase, movieList[ii]);
+        }
     }
 }

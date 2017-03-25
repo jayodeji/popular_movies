@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.jayodeji.android.popularmovies.dbcontract.MovieContract;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
@@ -18,6 +19,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 /**
  * Created by joshuaadeyemi on 2/26/17.
@@ -135,5 +137,20 @@ public class TestUtilities {
         testReviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, "reno");
         testReviewValues.put(MovieContract.ReviewEntry.COLUMN_URL, "http://revi.ew/"+reviewKey);
         return testReviewValues;
+    }
+
+    public static String getStaticStringField(Class clazz, String variableName) {
+        String value = null;
+        try {
+            Field stringField = clazz.getDeclaredField(variableName);
+            stringField.setAccessible(true);
+            value = (String) stringField.get(null);
+        } catch (NoSuchFieldException e) {
+            fail("Cannot get static member variable with error: " + e.getMessage());
+
+        } catch (IllegalAccessException e) {
+            fail("Cannot get static member variable with error: " + e.getMessage());
+        }
+        return value;
     }
 }

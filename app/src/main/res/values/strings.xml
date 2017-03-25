@@ -14,9 +14,13 @@
     <!--DIFFERENT SORTING ACTIONS-->
     <string name="sort_most_popular">Most Popular</string>
     <string name="sort_highest_rated">Highest Rated</string>
+    <string name="sort_favorites">Favorites</string>
 
     <string name="trailer_section_caption">Trailers:</string>
     <string name="review_section_caption">Reviews:</string>
+
+    <string name="mark_as_favorite">Mark As Favorite</string>
+    <string name="remove_as_favorite">Remove As Favorite</string>
 
     <!--PUT API SECRET KEY HERE-->
     <!--<string name="movie_db_api_key">XXXXX</string>-->

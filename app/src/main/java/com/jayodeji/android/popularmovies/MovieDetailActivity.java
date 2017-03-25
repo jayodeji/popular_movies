@@ -5,7 +5,6 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.text.TextUtilsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,17 +12,21 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import com.jayodeji.android.popularmovies.async.AddMovieSyncTask;
+import com.jayodeji.android.popularmovies.async.DeleteMovieAsyncTask;
 import com.jayodeji.android.popularmovies.data.Movie;
 import com.jayodeji.android.popularmovies.data.Review;
 import com.jayodeji.android.popularmovies.data.Trailer;
 import com.jayodeji.android.popularmovies.databinding.ActivityMovieDetailBinding;
-import com.jayodeji.android.popularmovies.loaders.FetchMovieDetailTaskLoader;
+import com.jayodeji.android.popularmovies.dbcontract.MovieContract;
+import com.jayodeji.android.popularmovies.async.FetchMovieDetailTaskLoader;
 import com.squareup.picasso.Picasso;
 
 public class MovieDetailActivity extends AppCompatActivity implements
         TrailerListAdapter.TrailerClickListener,
         ReviewListAdapter.ReviewClickListener,
-        LoaderManager.LoaderCallbacks<Movie> {
+        LoaderManager.LoaderCallbacks<Movie>,
+        View.OnClickListener {
 
     private static final String TAG = MovieDetailActivity.class.getSimpleName();
 
@@ -52,6 +55,14 @@ public class MovieDetailActivity extends AppCompatActivity implements
             mMovieId = getIntent().getIntExtra(EXTRA_MOVIE_ID, 0);
             bindMovieTitleFromIntent();
             loadMovieDetail(mMovieId);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mMovie != null) {
+            outState.putParcelable(EXTRA_MOVIE, mMovie);
         }
     }
 
@@ -95,6 +106,21 @@ public class MovieDetailActivity extends AppCompatActivity implements
         mMovieDetailBinding.rvMovieReviews.setLayoutManager(reviewLayoutManager);
         mMovieDetailBinding.rvMovieReviews.setHasFixedSize(true);
         mMovieDetailBinding.rvMovieReviews.setAdapter(reviewListAdapter);
+
+        //mark as favorite or not
+        bindMarkAsFavoriteData(movie);
+    }
+
+    public void bindMarkAsFavoriteData(Movie movie) {
+        //mark as favorite or remove as favorite
+        String markAsFavText = getString(R.string.mark_as_favorite);
+        if (movie.internalId > 0) {
+            markAsFavText = getString(R.string.remove_as_favorite);
+        }
+        mMovieDetailBinding.tvMarkFavorite.setText(markAsFavText);
+        //remove onclick listener before re-adding it
+        mMovieDetailBinding.tvMarkFavorite.setOnClickListener(null);
+        mMovieDetailBinding.tvMarkFavorite.setOnClickListener(this);
     }
 
     private void showMovieDetail() {
@@ -129,9 +155,14 @@ public class MovieDetailActivity extends AppCompatActivity implements
         if (data == null) {
             this.showLoadingError();
         } else {
+            setMovie(data);
             bindDataToViews(data);
             this.showMovieDetail();
         }
+    }
+
+    public void setMovie(Movie movie) {
+        mMovie = movie;
     }
 
     @Override
@@ -168,6 +199,20 @@ public class MovieDetailActivity extends AppCompatActivity implements
             startActivity(intent);
         } else {
             Log.d(TAG, "Couldn't call " + reviewUri.toString() + ", no receicing apps installed");
+        }
+    }
+
+    /**
+     * If mark as favorite or unmark as favorite is clicked
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        //If the movie id exists, then delete otherwise save
+        if (mMovie.internalId > 0) {
+            new DeleteMovieAsyncTask(this).execute(mMovie);
+        } else {
+            new AddMovieSyncTask(this).execute(mMovie);
         }
     }
 }

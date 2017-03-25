@@ -36,6 +36,8 @@ public class MovieContract {
         public static final String COLUMN_RUNTIME = "runtime";
         public static final String COLUMN_TIMESTAMP = "timestamp";
 
+        public static final String DEFAULT_SORT_KEY = _ID;
+
         public static String getTableCreationSql() {
             String sql = "CREATE TABLE " + TABLE_NAME + " (" +
                     _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -68,11 +70,13 @@ public class MovieContract {
 
         public static final String TABLE_NAME = "trailer";
 
+        public static final String COLUMN_EXTERNAL_MOVIE_ID = "external_movie_id";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_KEY = "key";
         public static final String COLUMN_URL = "url";
-        public static final String COLUMN_EXTERNAL_MOVIE_ID = "external_movie_id";
         public static final String COLUMN_TIMESTAMP = "timestamp";
+
+        public static final String DEFAULT_SORT_KEY = COLUMN_KEY;
 
         public static String getTableCreationSql() {
             String sql = "CREATE TABLE " + TABLE_NAME + " (" +
@@ -104,11 +108,13 @@ public class MovieContract {
 
         public static final String TABLE_NAME = "review";
 
+        public static final String COLUMN_EXTERNAL_MOVIE_ID = "external_movie_id";
         public static final String COLUMN_REVIEW_ID = "review";
         public static final String COLUMN_AUTHOR = "author";
         public static final String COLUMN_URL = "url";
-        public static final String COLUMN_EXTERNAL_MOVIE_ID = "external_movie_id";
         public static final String COLUMN_TIMESTAMP = "timestamp";
+
+        public static final String DEFAULT_SORT_KEY = COLUMN_REVIEW_ID;
 
         public static String getTableCreationSql() {
             String sql = "CREATE TABLE " + TABLE_NAME + " (" +

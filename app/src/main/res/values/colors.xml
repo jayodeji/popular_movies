@@ -6,4 +6,5 @@
 
     <color name="colorMovieTitleBackground">#009A9A</color>
     <color name="colorMovieTitleText">#FFFFFF</color>
+    <color name="colorFavoriteBackground">#009A9A</color>
 </resources>

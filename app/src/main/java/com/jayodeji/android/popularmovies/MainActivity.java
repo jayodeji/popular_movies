@@ -15,7 +15,7 @@ import android.view.View;
 
 import com.jayodeji.android.popularmovies.data.MoviePoster;
 import com.jayodeji.android.popularmovies.databinding.ActivityMainBinding;
-import com.jayodeji.android.popularmovies.loaders.FetchMovieListTaskLoader;
+import com.jayodeji.android.popularmovies.async.FetchMovieListTaskLoader;
 
 public class MainActivity extends AppCompatActivity implements
         MovieGridAdapter.MoviePosterClickListener,
@@ -29,9 +29,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final int NUM_COLUMNS = 2;
 
-    private static final String POPULAR_MOVIE_TYPE = "popular";
-    private static final String TOP_RATED_MOVIE_TYPE = "top_rated";
-    private static final String DEFAULT_MOVIE_TYPE = POPULAR_MOVIE_TYPE;
+    public static final String POPULAR_MOVIE_TYPE = "popular";
+    public static final String TOP_RATED_MOVIE_TYPE = "top_rated";
+    public static final String FAVORITES_MOVIE_TYPE = "favorites";
+    public static final String DEFAULT_MOVIE_TYPE = POPULAR_MOVIE_TYPE;
 
     protected MovieGridAdapter mMovieGridAdapter;
     protected MoviePoster[] mMovieList = null;
@@ -89,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.action_sort_most_popular:
                 Log.v(TAG, "Sorting by most popular.");
                 reloadMovieData(POPULAR_MOVIE_TYPE);
+                return true;
+            case R.id.action_favorites:
+                Log.v(TAG, "Sorting by favorites.");
+                reloadMovieData(FAVORITES_MOVIE_TYPE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

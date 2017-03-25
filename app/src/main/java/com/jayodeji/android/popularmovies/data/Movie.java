@@ -9,6 +9,7 @@ import android.os.Parcelable;
 
 public class Movie implements Parcelable {
 
+    public final long internalId;
     public final int movieId;
     public final String posterUrl;
     public final String thumbnailUrl;
@@ -21,6 +22,7 @@ public class Movie implements Parcelable {
     public final Review[] reviews;
 
     private Movie(Builder builder) {
+        internalId = builder.internalId;
         movieId = builder.newMovieId;
         posterUrl = builder.newPosterUrl;
         thumbnailUrl = builder.newThumbnailUrl;
@@ -34,6 +36,7 @@ public class Movie implements Parcelable {
     }
 
     protected Movie(Parcel in) {
+        internalId = in.readLong();
         movieId = in.readInt();
         posterUrl = in.readString();
         thumbnailUrl = in.readString();
@@ -65,6 +68,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(internalId);
         dest.writeInt(movieId);
         dest.writeString(posterUrl);
         dest.writeString(thumbnailUrl);
@@ -78,6 +82,7 @@ public class Movie implements Parcelable {
     }
 
     public static class Builder {
+        private long internalId = 0;
         private int newMovieId;
         private String newPosterUrl;
         private String newThumbnailUrl;
@@ -88,6 +93,11 @@ public class Movie implements Parcelable {
         private int newRuntime;
         private Trailer[] newTrailers;
         private Review[] newReviews;
+
+        public Builder internalId(long internalId) {
+            this.internalId = internalId;
+            return this;
+        }
 
         public Builder movieId(int movieId) {
             newMovieId = movieId;

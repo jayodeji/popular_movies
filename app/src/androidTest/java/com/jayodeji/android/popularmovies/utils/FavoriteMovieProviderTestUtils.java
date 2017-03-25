@@ -3,9 +3,15 @@ package com.jayodeji.android.popularmovies.utils;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.BaseColumns;
 
 import com.jayodeji.android.popularmovies.TestFavoriteMovieProvider;
 import com.jayodeji.android.popularmovies.dbcontract.MovieContract;
+
+import java.lang.reflect.Field;
+import java.util.Set;
+
+import static junit.framework.Assert.fail;
 
 /**
  * Created by joshuaadeyemi on 3/10/17.
@@ -21,24 +27,55 @@ public class FavoriteMovieProviderTestUtils {
 
 
     public static void validateMovieSavedWithTrailersAndReviews(SQLiteDatabase db, MovieTestInfo movieInfo) {
-        ContentValues movie = movieInfo.movie;
-        ContentValues[] trailers = movieInfo.trailers;
-        ContentValues[] reviews = movieInfo.reviews;
 
-        String externalMovieId = movieInfo.movie.getAsString(MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID);
-        Cursor movieCursor = db.query(
-                MovieContract.MovieEntry.TABLE_NAME,
-                null,
-                MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID + " = ?",
-                new String[]{externalMovieId},
-                null,
-                null,
-                null
+        int externalMovieId = movieInfo.movie.getAsInteger(MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID);
+
+        validateEntriesMatchContentValues(
+                db,
+                MovieContract.MovieEntry.class,
+                new ContentValues[]{movieInfo.movie},
+                externalMovieId
         );
-//        String errorMessage = ""
-//        TestUtilities.validateThenCloseCursor();
+
+        validateEntriesMatchContentValues(
+                db,
+                MovieContract.TrailerEntry.class,
+                movieInfo.trailers,
+                externalMovieId
+        );
+
+        validateEntriesMatchContentValues(
+                db,
+                MovieContract.ReviewEntry.class,
+                movieInfo.reviews,
+                externalMovieId
+        );
     }
 
+    public static void validateEntriesMatchContentValues(
+            SQLiteDatabase db,
+            Class clazz,
+            ContentValues[] expected,
+            int extMovieId) {
+
+        Cursor cursor = queryForEntries(db, clazz, extMovieId);
+
+        String sortkey = TestUtilities.getStaticStringField(clazz, "DEFAULT_SORT_KEY");
+        expected = TestUtilities.sortContentList(expected, sortkey, null);
+
+        Set<String> keySet = expected[0].keySet();
+        String[] columns = keySet.toArray(new String[keySet.size()]);
+        String errorMessage = "Entry(ies) either do not match or do not exist";
+        TestUtilities.validateListOfRecords(errorMessage, cursor, expected, columns);
+    }
+
+    public static Cursor queryForEntries(SQLiteDatabase db, Class clazz, int externalMovieId) {
+        String tableName = TestUtilities.getStaticStringField(clazz, "TABLE_NAME");
+        String where = TestUtilities.getStaticStringField(clazz, "COLUMN_EXTERNAL_MOVIE_ID") + " = ?";
+        String[] whereVals = {String.valueOf(externalMovieId)};
+        String sort = TestUtilities.getStaticStringField(clazz, "DEFAULT_SORT_KEY") + " ASC";
+        return db.query(tableName, null, where, whereVals, null, null, sort);
+    }
 
     public static MovieTestInfo[] insertMultipleMoviesIntoDatabase(SQLiteDatabase db, int numRecords) {
         int numReviews = 2;
