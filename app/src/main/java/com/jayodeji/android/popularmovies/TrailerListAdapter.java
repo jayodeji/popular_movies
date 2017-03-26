@@ -38,7 +38,6 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
     @Override
     public void onBindViewHolder(TrailerViewHolder holder, int position) {
         if (mTrailerList != null && (mTrailerList.length > position)) {
-            Trailer trailer = mTrailerList[position];
             String trailerTitle = "Trailer " + (position + 1);
             holder.mMovieTrailerTitle.setText(trailerTitle);
         }
@@ -59,8 +58,8 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
 
         public TrailerViewHolder(View trailerView) {
             super(trailerView);
-            mMovieTrailerTitle = (TextView) trailerView.findViewById(R.id.tv_trailer_title);
-            mPlayIcon = (ImageView) trailerView.findViewById(R.id.iv_play_icon);
+            mMovieTrailerTitle = (TextView) trailerView.findViewById(R.id.trailer_title);
+            mPlayIcon = (ImageView) trailerView.findViewById(R.id.play_icon);
             mPlayIcon.setOnClickListener(this);
         }
 

@@ -2,9 +2,12 @@ package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +21,6 @@ import com.jayodeji.android.popularmovies.data.Movie;
 import com.jayodeji.android.popularmovies.data.Review;
 import com.jayodeji.android.popularmovies.data.Trailer;
 import com.jayodeji.android.popularmovies.databinding.ActivityMovieDetailBinding;
-import com.jayodeji.android.popularmovies.dbcontract.MovieContract;
 import com.jayodeji.android.popularmovies.async.FetchMovieDetailTaskLoader;
 import com.squareup.picasso.Picasso;
 
@@ -71,7 +73,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         if (intentThatStartedActivity.hasExtra(EXTRA_MOVIE_TITLE)) {
             String movieTitle = intentThatStartedActivity.getStringExtra(EXTRA_MOVIE_TITLE);
             if (!TextUtils.isEmpty(movieTitle)) {
-                mMovieDetailBinding.tvMovieTitle.setText(movieTitle);
+                mMovieDetailBinding.movieTitle.setText(movieTitle);
             }
         }
     }
@@ -82,63 +84,77 @@ public class MovieDetailActivity extends AppCompatActivity implements
     }
 
     private void bindDataToViews(Movie movie) {
-        mMovieDetailBinding.tvMovieTitle.setText(movie.originalTitle);
-        mMovieDetailBinding.tvReleaseDate.setText(movie.releaseDate);
-        mMovieDetailBinding.tvMovieRating.setText(movie.userRating);
-        mMovieDetailBinding.tvMovieOverview.setText(movie.movieSynopsis);
-        mMovieDetailBinding.tvRuntime.setText(movie.runtime + "min");
+        mMovieDetailBinding.movieTitle.setText(movie.originalTitle);
+        mMovieDetailBinding.metaInfo.releaseDate.setText(movie.releaseDate);
+
+        mMovieDetailBinding.metaInfo.rating.setText(movie.userRating);
+        mMovieDetailBinding.metaInfo.runtime.setText(movie.runtime + "min");
 
         Picasso.with(this)
                 .load(movie.thumbnailUrl)
                 .error(R.drawable.placeholder)
-                .into(mMovieDetailBinding.ivMovieThumbnail);
+                .into(mMovieDetailBinding.metaInfo.thumbnail);
+
+        String thumbnailContentDescription = "Thumbnail for " + movie.originalTitle;
+        mMovieDetailBinding.metaInfo.thumbnail.setContentDescription(thumbnailContentDescription);
+
+        //mark as favorite or not
+        bindMarkAsFavoriteData(movie);
+
+        mMovieDetailBinding.extraInfo.overview.setText(movie.movieSynopsis);
 
         //add the trailers as an adapter
         TrailerListAdapter trailerListAdapter = new TrailerListAdapter(this, movie.trailers);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mMovieDetailBinding.rvMovieTrailers.setLayoutManager(layoutManager);
-        mMovieDetailBinding.rvMovieTrailers.setHasFixedSize(true);
-        mMovieDetailBinding.rvMovieTrailers.setAdapter(trailerListAdapter);
+        mMovieDetailBinding.extraInfo.movieTrailers.setLayoutManager(layoutManager);
+        mMovieDetailBinding.extraInfo.movieTrailers.setHasFixedSize(true);
+        mMovieDetailBinding.extraInfo.movieTrailers.setAdapter(trailerListAdapter);
 
         //add reviews as an adapter
         ReviewListAdapter reviewListAdapter = new ReviewListAdapter(this, movie.reviews);
         LinearLayoutManager reviewLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mMovieDetailBinding.rvMovieReviews.setLayoutManager(reviewLayoutManager);
-        mMovieDetailBinding.rvMovieReviews.setHasFixedSize(true);
-        mMovieDetailBinding.rvMovieReviews.setAdapter(reviewListAdapter);
-
-        //mark as favorite or not
-        bindMarkAsFavoriteData(movie);
+        mMovieDetailBinding.extraInfo.movieReviews.setLayoutManager(reviewLayoutManager);
+        mMovieDetailBinding.extraInfo.movieReviews.setHasFixedSize(true);
+        mMovieDetailBinding.extraInfo.movieReviews.setAdapter(reviewListAdapter);
     }
 
     public void bindMarkAsFavoriteData(Movie movie) {
-        //mark as favorite or remove as favorite
-        String markAsFavText = getString(R.string.mark_as_favorite);
+        String imageDescription;
+        int color;
         if (movie.internalId > 0) {
-            markAsFavText = getString(R.string.remove_as_favorite);
+            imageDescription = getString(R.string.remove_as_favorite);
+            color = ContextCompat.getColor(this, R.color.starSelectedTint);
+        } else {
+            imageDescription = getString(R.string.mark_as_favorite);
+            color = ContextCompat.getColor(this, R.color.starUnselectedTint);
         }
-        mMovieDetailBinding.tvMarkFavorite.setText(markAsFavText);
+
+        Drawable image = ContextCompat.getDrawable(this, R.drawable.ic_star);
+        DrawableCompat.setTint(image, color);
+        mMovieDetailBinding.metaInfo.star.setContentDescription(imageDescription);
+        mMovieDetailBinding.metaInfo.star.setImageDrawable(image);
+
         //remove onclick listener before re-adding it
-        mMovieDetailBinding.tvMarkFavorite.setOnClickListener(null);
-        mMovieDetailBinding.tvMarkFavorite.setOnClickListener(this);
+        mMovieDetailBinding.metaInfo.star.setOnClickListener(null);
+        mMovieDetailBinding.metaInfo.star.setOnClickListener(this);
     }
 
     private void showMovieDetail() {
-        mMovieDetailBinding.tvErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.svMovieDetail.setVisibility(View.VISIBLE);
+        mMovieDetailBinding.errorMessageDisplay.setVisibility(View.INVISIBLE);
+        mMovieDetailBinding.loadingIndicator.setVisibility(View.INVISIBLE);
+        mMovieDetailBinding.movieDetail.setVisibility(View.VISIBLE);
     }
 
     private void showLoadingError() {
-        mMovieDetailBinding.tvErrorMessageDisplay.setVisibility(View.VISIBLE);
-        mMovieDetailBinding.svMovieDetail.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMovieDetailBinding.errorMessageDisplay.setVisibility(View.VISIBLE);
+        mMovieDetailBinding.movieDetail.setVisibility(View.INVISIBLE);
+        mMovieDetailBinding.loadingIndicator.setVisibility(View.INVISIBLE);
     }
 
     public void showLoading() {
-        mMovieDetailBinding.tvErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.svMovieDetail.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.pbLoadingIndicator.setVisibility(View.VISIBLE);
+        mMovieDetailBinding.errorMessageDisplay.setVisibility(View.INVISIBLE);
+        mMovieDetailBinding.movieDetail.setVisibility(View.INVISIBLE);
+        mMovieDetailBinding.loadingIndicator.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -51,6 +51,7 @@ public class TestFavoriteMovieProvider {
 
     @After
     public void after() {
+        FavoriteMovieProviderTestUtils.clearAllRecords(mDatabase);
         mDbHelper.close();
     }
 
@@ -107,7 +108,7 @@ public class TestFavoriteMovieProvider {
     public void testQueryForFavoriteMoviesWithIdReturnsJustOneMovie() {
         MovieTestInfo[] movieList = FavoriteMovieProviderTestUtils.insertMultipleMoviesIntoDatabase(mDatabase, 2);
         ContentValues movie = movieList[0].movie;
-        long movieId = movie.getAsLong(MovieContract.MovieEntry._ID);
+        int movieId = movie.getAsInteger(MovieContract.MovieEntry.COLUMN_EXTERNAL_MOVIE_ID);
 
         Uri uri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, movieId);
         Cursor movieCursor = mContext.getContentResolver().query(uri, null, null, null, null);

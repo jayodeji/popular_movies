@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/overview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size"
+            android:layout_marginTop="@dimen/margin_top"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy."/>
+
+        <TextView
+            android:id="@+id/trailer_caption"
+            style="@style/ListItemCaption"
+            android:text="@string/trailer_section_caption"
+            app:layout_constraintTop_toBottomOf="@+id/overview"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <View
+            style="@style/BorderLine"
+            android:layout_marginBottom="@dimen/margin_bottom"
+            app:layout_constraintBottom_toTopOf="@+id/trailer_caption"
+            app:layout_constraintLeft_toLeftOf="@+id/trailer_caption"
+            app:layout_constraintRight_toRightOf="@+id/trailer_caption"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/movie_trailers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/trailer_caption"
+            app:layout_constraintLeft_toLeftOf="@+id/trailer_caption"
+            app:layout_constraintRight_toRightOf="@+id/trailer_caption"/>
+
+        <TextView
+            android:id="@+id/review_caption"
+            style="@style/ListItemCaption"
+            android:text="@string/review_section_caption"
+            app:layout_constraintTop_toBottomOf="@+id/movie_trailers"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/movie_reviews"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/review_caption"
+            app:layout_constraintLeft_toLeftOf="@+id/review_caption"
+            app:layout_constraintRight_toRightOf="@+id/review_caption"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

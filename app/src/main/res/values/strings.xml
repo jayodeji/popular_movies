@@ -22,6 +22,10 @@
     <string name="mark_as_favorite">Mark As Favorite</string>
     <string name="remove_as_favorite">Remove As Favorite</string>
 
+    <string name="thumbnail_description">Movie thumbnail image</string>
+    <string name="favorite_star_unselected">Press to set as favorite</string>
+    <string name="favorite_star_selected">Press to remove as favorite</string>
+
     <!--PUT API SECRET KEY HERE-->
     <!--<string name="movie_db_api_key">XXXXX</string>-->
 </resources>
