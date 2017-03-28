@@ -24,6 +24,14 @@ import com.jayodeji.android.popularmovies.databinding.ActivityMovieDetailBinding
 import com.jayodeji.android.popularmovies.async.FetchMovieDetailTaskLoader;
 import com.squareup.picasso.Picasso;
 
+//TODO Hide reviews section if reviews not present
+//TODO Hide trailers section if trailers not present
+//TODO Test that can view favorites when internet connection not available
+//TODO Try to make scrollview go up
+//TODO Make trailer/review/star icons clickable (Touch Selectors)
+//TODO Add ability to share movie detail information
+//TODO Try to use material icon for reviews and trailer icons
+//TODO Use Smallest Width Qualifier of 600dp, and (whatever dp for tablet) for Movie poster screen
 public class MovieDetailActivity extends AppCompatActivity implements
         TrailerListAdapter.TrailerClickListener,
         ReviewListAdapter.ReviewClickListener,

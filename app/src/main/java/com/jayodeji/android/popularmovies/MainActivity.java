@@ -1,22 +1,24 @@
 package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import android.graphics.Rect;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.jayodeji.android.popularmovies.data.MoviePoster;
-import com.jayodeji.android.popularmovies.databinding.ActivityMainBinding;
 import com.jayodeji.android.popularmovies.async.FetchMovieListTaskLoader;
 
+//TODO too much spacing/margins between rows when device is in portrait mode
 public class MainActivity extends AppCompatActivity implements
         MovieGridAdapter.MoviePosterClickListener,
         LoaderManager.LoaderCallbacks<MoviePoster[]> {
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final int MOVIE_LIST_LOADER_ID = 0;
 
-    private static final int NUM_COLUMNS = 2;
+    private static final int ITEM_SPACING = 2;
 
     public static final String POPULAR_MOVIE_TYPE = "popular";
     public static final String TOP_RATED_MOVIE_TYPE = "top_rated";
@@ -37,19 +39,23 @@ public class MainActivity extends AppCompatActivity implements
     protected MovieGridAdapter mMovieGridAdapter;
     protected MoviePoster[] mMovieList = null;
 
-    private ActivityMainBinding mMainBinding;
+    private RecyclerView mMoviePosterListView;
+    private ProgressBar mLoadingIndicator;
+    private TextView mLoadingErrorMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        setContentView(R.layout.activity_main);
+
+        mMoviePosterListView = (RecyclerView) findViewById(R.id.movie_poster_list);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
+        mLoadingErrorMessage = (TextView) findViewById(R.id.error_message_display);
 
         mMovieGridAdapter = new MovieGridAdapter(this);
-
-        GridLayoutManager layoutManager = new GridLayoutManager(this, NUM_COLUMNS);
-        mMainBinding.rvMoviePosters.setLayoutManager(layoutManager);
-        mMainBinding.rvMoviePosters.setHasFixedSize(true);
-        mMainBinding.rvMoviePosters.setAdapter(mMovieGridAdapter);
+        mMoviePosterListView.setHasFixedSize(true);
+        mMoviePosterListView.setAdapter(mMovieGridAdapter);
+        mMoviePosterListView.addItemDecoration(new SpacesItemDecoration(ITEM_SPACING));
 
         if (savedInstanceState != null) {
             mMovieList = (MoviePoster[]) savedInstanceState.getParcelableArray(EXTRA_MOVIE_ARRAY);
@@ -105,19 +111,19 @@ public class MainActivity extends AppCompatActivity implements
      * TOGGLE THE ERROR OR MOVIE POSTER VIEWS
      */
     public void showMoviePosterGrid() {
-        mMainBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
-        mMainBinding.tvErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        mMainBinding.rvMoviePosters.setVisibility(View.VISIBLE);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mLoadingErrorMessage.setVisibility(View.INVISIBLE);
+        mMoviePosterListView.setVisibility(View.VISIBLE);
     }
 
     public void showLoadingError() {
-        mMainBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
-        mMainBinding.rvMoviePosters.setVisibility(View.INVISIBLE);
-        mMainBinding.tvErrorMessageDisplay.setVisibility(View.VISIBLE);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMoviePosterListView.setVisibility(View.INVISIBLE);
+        mLoadingErrorMessage.setVisibility(View.VISIBLE);
     }
 
     public void showLoading() {
-        mMainBinding.pbLoadingIndicator.setVisibility(View.VISIBLE);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -164,5 +170,32 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<MoviePoster[]> loader) {
 
+    }
+
+    /*
+
+    Decorator which adds spacing around the tiles in a Grid layout RecyclerView. Apply to a RecyclerView with:
+    SpacesItemDecoration decoration = new SpacesItemDecoration(16);
+    mRecyclerView.addItemDecoration(decoration);
+
+    Feel free to add any value you wish for SpacesItemDecoration. That value determines the amount of spacing.
+    Source: http://blog.grafixartist.com/pinterest-masonry-layout-staggered-grid/
+    */
+
+    public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+        private final int mSpace;
+        public SpacesItemDecoration(int space) {
+            this.mSpace = space;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            outRect.left = mSpace;
+            outRect.right = mSpace;
+            outRect.bottom = mSpace;
+            // Add top margin only for the first item to avoid double space between items
+            if (parent.getChildAdapterPosition(view) == 0)
+                outRect.top = mSpace;
+        }
     }
 }
