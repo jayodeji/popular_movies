@@ -58,8 +58,8 @@
             android:layout_height="@dimen/favorite_star_height"
             android:src="@drawable/ic_star"
             android:contentDescription="@string/mark_as_favorite"
-            app:layout_constraintLeft_toRightOf="@+id/thumbnail"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/rating"
+            app:layout_constraintRight_toLeftOf="@id/rating"
             app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
             app:layout_constraintTop_toTopOf="@+id/thumbnail"
             app:layout_constraintVertical_bias="0.90"/>
