@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.jayodeji.android.popularmovies.data.MoviePoster;
 import com.jayodeji.android.popularmovies.async.FetchMovieListTaskLoader;
 
-//TODO too much spacing/margins between rows when device is in portrait mode
 public class MainActivity extends AppCompatActivity implements
         MovieGridAdapter.MoviePosterClickListener,
         LoaderManager.LoaderCallbacks<MoviePoster[]> {

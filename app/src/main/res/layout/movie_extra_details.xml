@@ -34,10 +34,13 @@
             app:layout_constraintLeft_toLeftOf="@+id/trailer_caption"
             app:layout_constraintRight_toRightOf="@+id/trailer_caption"/>
 
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/movie_trailers"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/trailer_caption"
             app:layout_constraintLeft_toLeftOf="@+id/trailer_caption"
             app:layout_constraintRight_toRightOf="@+id/trailer_caption"/>
@@ -54,6 +57,8 @@
             android:id="@+id/movie_reviews"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/review_caption"
             app:layout_constraintLeft_toLeftOf="@+id/review_caption"
             app:layout_constraintRight_toRightOf="@+id/review_caption"/>

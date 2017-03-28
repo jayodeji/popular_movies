@@ -60,7 +60,8 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
             super(trailerView);
             mMovieTrailerTitle = (TextView) trailerView.findViewById(R.id.trailer_title);
             mPlayIcon = (ImageView) trailerView.findViewById(R.id.play_icon);
-            mPlayIcon.setOnClickListener(this);
+//            mPlayIcon.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override

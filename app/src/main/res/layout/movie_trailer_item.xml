@@ -4,19 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_container_height"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/list_item_selector">
 
     <ImageView
         android:id="@+id/play_icon"
         style="@style/ListItemIcon"
-        android:src="@drawable/ic_media_controls_play_icon"/>
+        android:src="@drawable/ic_play_circle_outline_black_24dp"/>
 
     <TextView
         android:id="@+id/trailer_title"
         style="@style/ListItemText"
         tools:text="Trailer 1"/>
-
-    <View
-        style="@style/BorderLine"/>
 
 </LinearLayout>

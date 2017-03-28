@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="defaultBackground">#FAFAFA</color>
 
-    <color name="colorMovieTitleBackground">#009A9A</color>
-    <color name="colorMovieTitleText">#FFFFFF</color>
-    <color name="colorFavoriteBackground">#009A9A</color>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryDark">#00796B</color>
+    <color name="colorPrimaryLight">#B2DFDB</color>
+    <color name="colorAccent">#E040FB</color>
 
-    <color name="colorText">#757e8c</color>
-    <color name="starSelectedTint">#f7d931</color>
-    <color name="starUnselectedTint">#A8A8A8</color>
+    <color name="colorPrimaryText">#FFFFFF</color>
+    <color name="colorSecondaryText">#757575</color>
+
+    <color name="colorDivider">#BDBDBD</color>
+
+
+    <!--<color name="colorText">#757e8c</color>-->
+    <color name="colorStarSelectedTint">#f7d931</color>
+    <color name="colorStarUnselectedTint">#A8A8A8</color>
 
     <color name="posterBackground">#000000</color>
+
 </resources>

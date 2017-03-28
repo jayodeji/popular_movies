@@ -10,7 +10,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.DividerItemDecoration;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,14 +24,9 @@ import com.jayodeji.android.popularmovies.databinding.ActivityMovieDetailBinding
 import com.jayodeji.android.popularmovies.async.FetchMovieDetailTaskLoader;
 import com.squareup.picasso.Picasso;
 
-//TODO Hide reviews section if reviews not present
-//TODO Hide trailers section if trailers not present
-//TODO Test that can view favorites when internet connection not available
 //TODO Try to make scrollview go up
-//TODO Make trailer/review/star icons clickable (Touch Selectors)
 //TODO Add ability to share movie detail information
-//TODO Try to use material icon for reviews and trailer icons
-//TODO Use Smallest Width Qualifier of 600dp, and (whatever dp for tablet) for Movie poster screen
+//TODO Different layout based on orientation and screen size
 public class MovieDetailActivity extends AppCompatActivity implements
         TrailerListAdapter.TrailerClickListener,
         ReviewListAdapter.ReviewClickListener,
@@ -112,18 +107,25 @@ public class MovieDetailActivity extends AppCompatActivity implements
         mMovieDetailBinding.extraInfo.overview.setText(movie.movieSynopsis);
 
         //add the trailers as an adapter
-        TrailerListAdapter trailerListAdapter = new TrailerListAdapter(this, movie.trailers);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mMovieDetailBinding.extraInfo.movieTrailers.setLayoutManager(layoutManager);
+        mMovieDetailBinding.extraInfo.movieTrailers.setAdapter(new TrailerListAdapter(this, movie.trailers));
         mMovieDetailBinding.extraInfo.movieTrailers.setHasFixedSize(true);
-        mMovieDetailBinding.extraInfo.movieTrailers.setAdapter(trailerListAdapter);
+        mMovieDetailBinding.extraInfo.movieTrailers.addItemDecoration(
+                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        );
+        if (movie.trailers == null || movie.trailers.length == 0) {
+            mMovieDetailBinding.extraInfo.trailerCaption.setVisibility(View.INVISIBLE);
+        }
 
         //add reviews as an adapter
-        ReviewListAdapter reviewListAdapter = new ReviewListAdapter(this, movie.reviews);
-        LinearLayoutManager reviewLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mMovieDetailBinding.extraInfo.movieReviews.setLayoutManager(reviewLayoutManager);
+        mMovieDetailBinding.extraInfo.movieReviews.setAdapter(new ReviewListAdapter(this, movie.reviews));
         mMovieDetailBinding.extraInfo.movieReviews.setHasFixedSize(true);
-        mMovieDetailBinding.extraInfo.movieReviews.setAdapter(reviewListAdapter);
+        mMovieDetailBinding.extraInfo.movieReviews.addItemDecoration(
+                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        );
+        Log.v(TAG, "Review length: " + movie.reviews.length);
+        if (movie.reviews == null || movie.reviews.length == 0) {
+            mMovieDetailBinding.extraInfo.reviewCaption.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void bindMarkAsFavoriteData(Movie movie) {
@@ -131,10 +133,10 @@ public class MovieDetailActivity extends AppCompatActivity implements
         int color;
         if (movie.internalId > 0) {
             imageDescription = getString(R.string.remove_as_favorite);
-            color = ContextCompat.getColor(this, R.color.starSelectedTint);
+            color = ContextCompat.getColor(this, R.color.colorStarSelectedTint);
         } else {
             imageDescription = getString(R.string.mark_as_favorite);
-            color = ContextCompat.getColor(this, R.color.starUnselectedTint);
+            color = ContextCompat.getColor(this, R.color.colorStarUnselectedTint);
         }
 
         Drawable image = ContextCompat.getDrawable(this, R.drawable.ic_star);

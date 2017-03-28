@@ -4,19 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_container_height"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/list_item_selector">
 
     <ImageView
         android:id="@+id/review_icon"
         style="@style/ListItemIcon"
-        android:src="@drawable/ic_review"/>
+        android:src="@drawable/ic_rate_review_black_24dp"/>
 
     <TextView
         android:id="@+id/review_author"
         style="@style/ListItemText"
         tools:text="By Joshua"/>
-
-    <View
-        style="@style/BorderLine"/>
 
 </LinearLayout>
