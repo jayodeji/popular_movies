@@ -1,7 +1,6 @@
 package com.jayodeji.android.popularmovies;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
     public TrailerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         boolean attachImmediatelyToParent = false;
-        View view = inflater.inflate(R.layout.movie_trailer_item, parent, attachImmediatelyToParent);
+        View view = inflater.inflate(R.layout.trailer_item, parent, attachImmediatelyToParent);
         return new TrailerViewHolder(view);
     }
 
@@ -60,7 +59,6 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
             super(trailerView);
             mMovieTrailerTitle = (TextView) trailerView.findViewById(R.id.trailer_title);
             mPlayIcon = (ImageView) trailerView.findViewById(R.id.play_icon);
-//            mPlayIcon.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
@@ -73,6 +71,6 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
     }
 
     public interface TrailerClickListener {
-        public void onTrailerClick(Trailer clickedTrailer);
+        void onTrailerClick(Trailer clickedTrailer);
     }
 }

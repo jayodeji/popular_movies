@@ -22,7 +22,6 @@
     <style name="ListItemCaption">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_marginTop">@dimen/caption_margin_top</item>
         <item name="android:textSize">@dimen/caption_text_size</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
@@ -38,7 +37,6 @@
     <style name="ListItemIcon">
         <item name="android:layout_height">@dimen/list_icon_height</item>
         <item name="android:layout_width">@dimen/list_icon_width</item>
-        <item name="android:layout_marginLeft">@dimen/list_icon_left_margin</item>
         <item name="android:layout_gravity">center</item>
     </style>
 

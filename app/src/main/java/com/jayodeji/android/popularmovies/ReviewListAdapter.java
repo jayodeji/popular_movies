@@ -29,7 +29,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
     public ReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         boolean attachImmediatelyToParent = false;
-        View view = inflater.inflate(R.layout.movie_review_item, parent, attachImmediatelyToParent);
+        View view = inflater.inflate(R.layout.review_item, parent, attachImmediatelyToParent);
         return new ReviewViewHolder(view);
 
     }
@@ -61,7 +61,6 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
             super(itemView);
             mReviewAuthor = (TextView) itemView.findViewById(R.id.review_author);
             mReviewIcon = (ImageView) itemView.findViewById(R.id.review_icon);
-//            mReviewIcon.setOnClickListener(this);
             itemView.setOnClickListener(this);
 
         }
@@ -75,6 +74,6 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Re
     }
 
     public interface ReviewClickListener {
-        public void onReviewClicked(Review clickedReview);
+        void onReviewClicked(Review clickedReview);
     }
 }

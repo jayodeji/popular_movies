@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<LinearLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content">-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/trailer_caption"-->
+        <!--style="@style/ListItemCaption"-->
+        <!--android:layout_marginTop="0dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/trailer_section_caption"/>-->
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/movie_trailers"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->
+        <!--android:orientation="vertical"/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/review_caption"-->
+        <!--style="@style/ListItemCaption"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="@dimen/caption_margin_top"-->
+        <!--android:text="@string/review_section_caption"/>-->
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/movie_reviews"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->
+        <!--android:orientation="vertical"/>-->
+
+<!--</LinearLayout>-->
+<!--<android.support.constraint.ConstraintLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_width="match_parent">-->
+
+    <!--<android.support.constraint.Guideline-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/trl_vertical_guideline"-->
+        <!--app:layout_constraintGuide_percent="0.2"-->
+        <!--android:orientation="vertical"/>-->
+
+    <!--<android.support.constraint.Guideline-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/trl_horizontal_guideline"-->
+        <!--app:layout_constraintGuide_percent="0.15"-->
+        <!--android:orientation="horizontal"/>-->
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/trailer_caption"-->
+        <!--style="@style/ListItemCaption"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/trailer_section_caption"-->
+        <!--android:layout_marginBottom="@dimen/margin_bottom"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toLeftOf="@+id/trl_vertical_guideline"-->
+        <!--app:layout_constraintHorizontal_bias="0"/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/review_caption"-->
+        <!--style="@style/ListItemCaption"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/review_section_caption"-->
+        <!--android:layout_marginBottom="@dimen/margin_bottom"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintLeft_toRightOf="@+id/trl_vertical_guideline"-->
+        <!--app:layout_constraintRight_toRightOf="parent"/>-->
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/movie_trailers"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->
+        <!--android:orientation="vertical"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/trailer_caption"-->
+        <!--app:layout_constraintLeft_toLeftOf="@+id/trailer_caption"/>-->
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/movie_reviews"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->
+        <!--android:orientation="vertical"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/trailer_caption"-->
+        <!--app:layout_constraintLeft_toLeftOf="@+id/review_caption"/>-->
+
+<!--</android.support.constraint.ConstraintLayout>-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/trailer_caption"
+            style="@style/ListItemCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/trailer_section_caption"/>
+
+        <TextView
+            android:id="@+id/review_caption"
+            style="@style/ListItemCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/review_section_caption"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/movie_trailers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            android:orientation="vertical"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/movie_reviews"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            android:orientation="vertical"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

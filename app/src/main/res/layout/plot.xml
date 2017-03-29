@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/overview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size"
+        android:layout_marginTop="@dimen/margin_top"
+        tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy."/>
+</merge>

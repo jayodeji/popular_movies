@@ -1,7 +1,6 @@
 package com.jayodeji.android.popularmovies;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
@@ -11,18 +10,25 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.jayodeji.android.popularmovies.async.AddMovieSyncTask;
 import com.jayodeji.android.popularmovies.async.DeleteMovieAsyncTask;
 import com.jayodeji.android.popularmovies.data.Movie;
 import com.jayodeji.android.popularmovies.data.Review;
 import com.jayodeji.android.popularmovies.data.Trailer;
-import com.jayodeji.android.popularmovies.databinding.ActivityMovieDetailBinding;
 import com.jayodeji.android.popularmovies.async.FetchMovieDetailTaskLoader;
 import com.squareup.picasso.Picasso;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 //TODO Try to make scrollview go up
 //TODO Add ability to share movie detail information
@@ -41,14 +47,34 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     private static final int MOVIE_DETAIL_LOADER_ID = 1;
 
-    private ActivityMovieDetailBinding mMovieDetailBinding;
-
     private Movie mMovie = null;
     private int mMovieId;
+
+    //Views to bind
+    @BindView(R.id.movie_title) protected TextView mMovieTitle;
+    @BindView(R.id.rating) protected TextView mRating;
+    @BindView(R.id.release_date) protected TextView mReleaseDate;
+    @BindView(R.id.runtime) protected TextView mRuntime;
+    @BindView(R.id.overview) protected TextView mOverview;
+    @BindView(R.id.load_error) protected TextView mLoadError;
+    @BindView(R.id.trailer_caption) protected TextView mMovieTrailerCaption;
+    @BindView(R.id.review_caption) protected TextView mMovieReviewCaption;
+
+    @BindView(R.id.progress_bar) protected ProgressBar mLoadingIndicator;
+
+    @BindView(R.id.star) protected ImageView mFavoriteStar;
+    @BindView(R.id.thumbnail) protected ImageView mThumbnail;
+
+    @BindView(R.id.movie_reviews) protected RecyclerView mMovieReviews;
+    @BindView(R.id.movie_trailers) protected RecyclerView mMovieTrailers;
+
+    @BindView(R.id.movie_detail) protected FrameLayout mMovieDetails;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMovieDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
+        setContentView(R.layout.activity_movie_detail);
+        ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
             mMovie = (Movie) savedInstanceState.getParcelable(EXTRA_MOVIE);
@@ -76,7 +102,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         if (intentThatStartedActivity.hasExtra(EXTRA_MOVIE_TITLE)) {
             String movieTitle = intentThatStartedActivity.getStringExtra(EXTRA_MOVIE_TITLE);
             if (!TextUtils.isEmpty(movieTitle)) {
-                mMovieDetailBinding.movieTitle.setText(movieTitle);
+                mMovieTitle.setText(movieTitle);
             }
         }
     }
@@ -86,46 +112,47 @@ public class MovieDetailActivity extends AppCompatActivity implements
         getSupportLoaderManager().initLoader(MOVIE_DETAIL_LOADER_ID, loaderBundle, this);
     }
 
-    private void bindDataToViews(Movie movie) {
-        mMovieDetailBinding.movieTitle.setText(movie.originalTitle);
-        mMovieDetailBinding.metaInfo.releaseDate.setText(movie.releaseDate);
 
-        mMovieDetailBinding.metaInfo.rating.setText(movie.userRating);
-        mMovieDetailBinding.metaInfo.runtime.setText(movie.runtime + "min");
+    private void bindDataToViews(Movie movie) {
+        mMovieTitle.setText(movie.originalTitle);
+        mReleaseDate.setText(movie.releaseDate);
+
+        mRating.setText(movie.userRating);
+        mRuntime.setText(movie.runtime + "min");
 
         Picasso.with(this)
                 .load(movie.thumbnailUrl)
                 .error(R.drawable.placeholder)
-                .into(mMovieDetailBinding.metaInfo.thumbnail);
+                .into(mThumbnail);
 
         String thumbnailContentDescription = "Thumbnail for " + movie.originalTitle;
-        mMovieDetailBinding.metaInfo.thumbnail.setContentDescription(thumbnailContentDescription);
+        mThumbnail.setContentDescription(thumbnailContentDescription);
 
         //mark as favorite or not
         bindMarkAsFavoriteData(movie);
 
-        mMovieDetailBinding.extraInfo.overview.setText(movie.movieSynopsis);
+        mOverview.setText(movie.movieSynopsis);
 
-        //add the trailers as an adapter
-        mMovieDetailBinding.extraInfo.movieTrailers.setAdapter(new TrailerListAdapter(this, movie.trailers));
-        mMovieDetailBinding.extraInfo.movieTrailers.setHasFixedSize(true);
-        mMovieDetailBinding.extraInfo.movieTrailers.addItemDecoration(
+        mMovieTrailers.setAdapter(new TrailerListAdapter(this, movie.trailers));
+        mMovieTrailers.setHasFixedSize(true);
+        mMovieTrailers.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         );
         if (movie.trailers == null || movie.trailers.length == 0) {
-            mMovieDetailBinding.extraInfo.trailerCaption.setVisibility(View.INVISIBLE);
+            mMovieTrailerCaption.setVisibility(View.INVISIBLE);
         }
 
         //add reviews as an adapter
-        mMovieDetailBinding.extraInfo.movieReviews.setAdapter(new ReviewListAdapter(this, movie.reviews));
-        mMovieDetailBinding.extraInfo.movieReviews.setHasFixedSize(true);
-        mMovieDetailBinding.extraInfo.movieReviews.addItemDecoration(
+        mMovieReviews.setAdapter(new ReviewListAdapter(this, movie.reviews));
+        mMovieReviews.setHasFixedSize(true);
+        mMovieReviews.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         );
-        Log.v(TAG, "Review length: " + movie.reviews.length);
         if (movie.reviews == null || movie.reviews.length == 0) {
-            mMovieDetailBinding.extraInfo.reviewCaption.setVisibility(View.INVISIBLE);
+            mMovieReviewCaption.setVisibility(View.INVISIBLE);
         }
+        Log.v(TAG, "Num Trailers: " + movie.trailers.length);
+        Log.v(TAG, "Num Reviews: " + movie.reviews.length);
     }
 
     public void bindMarkAsFavoriteData(Movie movie) {
@@ -141,30 +168,30 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         Drawable image = ContextCompat.getDrawable(this, R.drawable.ic_star);
         DrawableCompat.setTint(image, color);
-        mMovieDetailBinding.metaInfo.star.setContentDescription(imageDescription);
-        mMovieDetailBinding.metaInfo.star.setImageDrawable(image);
+        mFavoriteStar.setContentDescription(imageDescription);
+        mFavoriteStar.setImageDrawable(image);
 
         //remove onclick listener before re-adding it
-        mMovieDetailBinding.metaInfo.star.setOnClickListener(null);
-        mMovieDetailBinding.metaInfo.star.setOnClickListener(this);
+        mFavoriteStar.setOnClickListener(null);
+        mFavoriteStar.setOnClickListener(this);
     }
 
     private void showMovieDetail() {
-        mMovieDetailBinding.errorMessageDisplay.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.loadingIndicator.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.movieDetail.setVisibility(View.VISIBLE);
+        mLoadError.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMovieDetails.setVisibility(View.VISIBLE);
     }
 
     private void showLoadingError() {
-        mMovieDetailBinding.errorMessageDisplay.setVisibility(View.VISIBLE);
-        mMovieDetailBinding.movieDetail.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.loadingIndicator.setVisibility(View.INVISIBLE);
+        mLoadError.setVisibility(View.VISIBLE);
+        mMovieDetails.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
     }
 
     public void showLoading() {
-        mMovieDetailBinding.errorMessageDisplay.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.movieDetail.setVisibility(View.INVISIBLE);
-        mMovieDetailBinding.loadingIndicator.setVisibility(View.VISIBLE);
+        mLoadError.setVisibility(View.INVISIBLE);
+        mMovieDetails.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -179,11 +206,11 @@ public class MovieDetailActivity extends AppCompatActivity implements
     @Override
     public void onLoadFinished(Loader<Movie> loader, Movie data) {
         if (data == null) {
-            this.showLoadingError();
+            showLoadingError();
         } else {
             setMovie(data);
             bindDataToViews(data);
-            this.showMovieDetail();
+            showMovieDetail();
         }
     }
 

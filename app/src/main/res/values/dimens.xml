@@ -7,7 +7,7 @@
     <dimen name="horizontal_line_height">1dp</dimen>
 
     <!--General dimensions-->
-    <dimen name="activity_padding">16dp</dimen>
+    <dimen name="activity_padding">10dp</dimen>
     <dimen name="activity_detail_margin">5dp</dimen>
 
     <!--Dimensions for progress bar size-->
@@ -34,7 +34,7 @@
     <dimen name="caption_text_size">25sp</dimen>
     <dimen name="caption_margin_top">20dp</dimen>
     <dimen name="rating_padding">3dp</dimen>
-    <dimen name="list_item_left_margin">30dp</dimen>
+    <dimen name="list_item_left_margin">15dp</dimen>
     <dimen name="list_icon_height">35dp</dimen>
     <dimen name="list_icon_width">35dp</dimen>
     <dimen name="list_icon_left_margin">16dp</dimen>
