@@ -30,9 +30,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-//TODO Try to make scrollview go up
 //TODO Add ability to share movie detail information
-//TODO Different layout based on orientation and screen size
 public class MovieDetailActivity extends AppCompatActivity implements
         TrailerListAdapter.TrailerClickListener,
         ReviewListAdapter.ReviewClickListener,

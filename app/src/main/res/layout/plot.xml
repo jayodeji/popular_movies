@@ -9,5 +9,5 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_size"
         android:layout_marginTop="@dimen/margin_top"
-        tools:text="A rogue band of resistance fighters unite for a mission to steal the Death Star plans and bring a new hope to the galaxy."/>
+        tools:text="@string/lorem_ipsum"/>
 </merge>
